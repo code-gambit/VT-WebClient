@@ -49,13 +49,18 @@ const Files = () => {
                     <FileForm/>
                 </ModalBody>
             </Modal>
-            <Row>
-                {fileState.files.map(file=>{
-                    return(
-                        renderFile(file)
-                    )
-                })}            
-            </Row>
+            
+                <>{fileState.files.length!=0 ?
+                <Row>
+                    {fileState.files.map(file=>{
+                        return(
+                            renderFile(file)
+                        )
+                    })}
+                </Row>
+                :<div></div>
+            }</>         
+            
         </div>
      );
 }

@@ -27,7 +27,7 @@ const Header = () => {
     },[authState]);
     
     const mock_user={
-        PK:"USER#123456789",
+        PK:"USER#1234567892",
         SK:"METADATA",
         email:"user@abc.com",
         type:"default",

@@ -1,4 +1,6 @@
-import * as ActionTypes from '../ActionTypes'
+import * as ActionTypes from '../ActionTypes';
+import axios from 'axios';
+import env from "react-dotenv";
 
 export const fileStateLoading=()=>({
     type:ActionTypes.FILE_STATE_LOADING
@@ -30,31 +32,45 @@ export const addFile=(fileData,fileDispatch)=>{
     fileDispatch(fileStateUpdate(fileData))
 }
 
-export const loadFiles=(fileDispatch)=>{
-    var files =[
+export const loadFiles = async (fileDispatch) => {
+    
+    // var files =[
+    //     {
+    //         PK:"USER#123",
+    //         SK:"FILE#454",
+    //         LS1_SK:"File1",
+    //         hash:"878",
+    //         size:"12",
+    //         type:"audio"
+    //     },{
+    //         PK:"USER#123",
+    //         SK:"FILE#454",
+    //         LS1_SK:"File2",
+    //         hash:"879",
+    //         size:"12",
+    //         type:"audio"
+    //     },{
+    //         PK:"USER#123",
+    //         SK:"FILE#454",
+    //         LS1_SK:"File3",
+    //         hash:"879",
+    //         size:"0.04",
+    //         type:"video"
+    //     }
+    // ]
+    var userId = JSON.parse(localStorage.getItem("auth")).PK.substring(5);    
+    axios.get(
+        `user/${userId}/file`,
         {
-            PK:"USER#123",
-            SK:"FILE#454",
-            LS1_SK:"File1",
-            hash:"878",
-            size:"12",
-            type:"audio"
-        },{
-            PK:"USER#123",
-            SK:"FILE#454",
-            LS1_SK:"File2",
-            hash:"879",
-            size:"12",
-            type:"audio"
-        },{
-            PK:"USER#123",
-            SK:"FILE#454",
-            LS1_SK:"File3",
-            hash:"879",
-            size:"0.04",
-            type:"video"
-        }
-        
-    ]
-    fileDispatch(fileStateADD(files))
+            headers:{                                                
+                'X-Api-Key':env.APIKEY,                                                
+            }
+        }       
+    ).then((response)=>{
+        //alert(JSON.stringify(response));
+        fileDispatch(fileStateADD(response.data.body.items))
+    }, (error) => {
+        console.log(error);
+    })    
+    
 }
