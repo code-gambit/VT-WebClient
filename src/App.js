@@ -17,12 +17,7 @@ import FileContextProvider from './Context/Contexts/FileContext';
 const Routing= () =>{
   const history=useHistory()
   const auth = JSON.parse(localStorage.getItem("auth"));
-  if(auth){
-    if(history.location.pathname="/"){
-      history.push("/dashboard");
-    }
-  }
-  else{
+  if(!auth){
     if(!(history.location.pathname="/") && !(history.location.pathname="/about")){
       history.push("/");
     }
@@ -56,9 +51,9 @@ function App() {
   return (
     <div className="App">
       <AuthContextProvider>
-        <BrowserRouter>
-          <Header/>
+        <BrowserRouter>          
           <FileContextProvider>          
+            <Header/>
             <Routing/>
           </FileContextProvider>
         </BrowserRouter>

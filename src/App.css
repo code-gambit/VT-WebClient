@@ -1,3 +1,9 @@
 .navbar-dark {
     background-color: #303c6C;
 }
+.file-size-badge{
+    background-color: #ff0000;
+}
+.file-type-badge{
+    background-color: #66ffff;
+}

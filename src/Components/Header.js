@@ -4,20 +4,26 @@ import { Navbar, NavbarBrand, Nav, NavbarToggler,
     DropdownMenu, DropdownItem } from 'reactstrap';
 import { NavLink, useHistory} from 'react-router-dom';
 import { AuthContext } from '../Context/Contexts/AuthContext';
-import * as ActionCreators from '../Context/ActionCreators/AuthActionCreater';
+import * as AuthActionCreators from '../Context/ActionCreators/AuthActionCreater';
+import * as FileActionCreators from '../Context/ActionCreators/FileActionCreator';
+import { FileContext } from '../Context/Contexts/FileContext';
 const Header = () => {
     const [isNavOpen,setIsNavOpen] = useState(false);
     const [state,setState] = useState(undefined);
     const [dropdownOpen,setDropdownOpen] = useState(false);
     const {authState, authDispatch} = useContext(AuthContext);
+    const {fileState, fileDispatch} = useContext(FileContext);
     const history=useHistory()
     useEffect(() =>{
         if (!authState.auth.PK) {
             const auth = JSON.parse(localStorage.getItem("auth"));
-            if(auth) authDispatch(ActionCreators.authStateUpdate(auth));
+            if(auth) authDispatch(AuthActionCreators.authStateUpdate(auth));
             else setState(undefined);
         }  
-        else if(authState.auth.PK) setState(authState.auth);
+        else if(authState.auth.PK) {
+            setState(authState.auth);
+            FileActionCreators.loadFiles(fileDispatch);
+        }
     },[authState]);
     
     const mock_user={
@@ -36,12 +42,12 @@ const Header = () => {
     }
     
     const handleLogin = (event) =>{
-        authDispatch(ActionCreators.authStateUpdate(mock_user)); 
+        authDispatch(AuthActionCreators.authStateUpdate(mock_user)); 
         localStorage.setItem("auth",JSON.stringify(mock_user))
         history.push('/dashboard')       
     }
     const handleLogout = (event) =>{
-        authDispatch(ActionCreators.authStateUpdate({}));
+        authDispatch(AuthActionCreators.authStateUpdate({}));
         localStorage.clear()
         history.push('/')
     }

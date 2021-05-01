@@ -3,30 +3,13 @@ import {fileReducer} from '../Reducers/FileReducer';
 
 export const FileContext = createContext();
 const FileContextProvider = (props) => {
-    const [fileState, file_dispatch] = useReducer(fileReducer,{
+    const [fileState, fileDispatch] = useReducer(fileReducer,{
         isLoading:true,
         errMess:null,
-        files:[
-            {
-                PK:"USER#123",
-                SK:"FILE#454",
-                LS1_SK:"File1",
-                hash:"878",
-                size:"12",
-                type:"audio"
-            },{
-                PK:"USER#123",
-                SK:"FILE#454",
-                LS1_SK:"File2",
-                hash:"879",
-                size:"12",
-                type:"audio"
-            },
-            
-        ]
+        files:[]
     })
     return ( 
-        <FileContext.Provider value={{fileState,file_dispatch}}>
+        <FileContext.Provider value={{fileState,fileDispatch}}>
             {props.children}
         </FileContext.Provider>
      );
