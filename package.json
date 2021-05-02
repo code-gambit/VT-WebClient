@@ -12,6 +12,7 @@
     "axios": "^0.21.1",
     "bootstrap": "^4.6.0",
     "bootstrap-social": "^5.1.1",
+    "date-and-time": "^1.0.0",
     "dotenv": "^8.2.0",
     "font-awesome": "^4.7.0",
     "react": "^17.0.2",
@@ -47,6 +48,9 @@
     ]
   },
   "react-dotenv": {
-    "whitelist": ["APIKEY","BACKENDURL"]
+    "whitelist": [
+      "APIKEY",
+      "BACKENDURL"
+    ]
   }
 }

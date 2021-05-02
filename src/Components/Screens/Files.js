@@ -4,8 +4,12 @@ import { Card, Button, CardTitle, CardText, Row, Col,
 import { FileContext } from '../../Context/Contexts/FileContext';
 import * as FileActionCreators from '../../Context/ActionCreators/FileActionCreator'
 import FileForm from './FileForm';
+import date from 'date-and-time'
 
-function renderFile(file){    
+function renderFile(file){
+  var date2=file.SK.slice(5);
+  var now=date.parse(date2,'YYYY-MM-DD-hh-mm-ss');
+  now=date.format(now, 'ddd, MMM DD, YYYY H:mm');
     return(
         <Col sm="6" className="p-2">
             <Card body>
@@ -17,11 +21,11 @@ function renderFile(file){
                         <span className="rounded-pill primary-text mx-1 col-3 file-type-badge">{file.type}</span>
                         <span className="rounded-pill primary-text mx-1 col-3 file-size-badge">{file.size} MB</span>
                     </div>
-                </div> 
+                </div>
                 <div className="col-12">
-                    <CardText>Created at: {file.SK}</CardText>
+                    <CardText>Created at: {now}</CardText>
                     <Button>Details</Button>
-                </div>                   
+                </div>
             </Card>
         </Col>
     )
@@ -30,14 +34,14 @@ function renderFile(file){
 const Files = () => {
     const {fileState,fileDispatch} = useContext(FileContext);
     const [isFileFormOpen,setIsFileFormOpen] = useState(false);
-    // useEffect(()=>{        
+    // useEffect(()=>{
     //     FileActionCreators.loadFiles(fileDispatch);
     // },[])
 
     const toggleFileFormModal = ()=>{
         setIsFileFormOpen(!isFileFormOpen)
     }
-    return ( 
+    return (
         <div className="container">
             <div>
                 Total Files: {fileState.files.length}
@@ -49,7 +53,7 @@ const Files = () => {
                     <FileForm/>
                 </ModalBody>
             </Modal>
-            
+
                 <>{fileState.files.length!=0 ?
                 <Row>
                     {fileState.files.map(file=>{
@@ -59,10 +63,10 @@ const Files = () => {
                     })}
                 </Row>
                 :<div></div>
-            }</>         
-            
+            }</>
+
         </div>
      );
 }
- 
+
 export default Files;
