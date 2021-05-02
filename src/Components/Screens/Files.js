@@ -2,12 +2,13 @@ import React, { useContext, useEffect, useState } from 'react';
 import { Card, Button, CardTitle, CardText, Row, Col,
     Modal,ModalHeader, ModalBody } from 'reactstrap';
 import { FileContext } from '../../Context/Contexts/FileContext';
-import * as FileActionCreators from '../../Context/ActionCreators/FileActionCreator'
 import FileForm from './FileForm';
+import {Link} from 'react-router-dom';
 
 function renderFile(file){    
+    const fileId=file.SK.substring(5)
     return(
-        <Col sm="6" className="p-2">
+        <Col sm="6" className="p-2" key={file.SK}>
             <Card body>
                 <div className="col-12">
                     <div className="float-left">
@@ -20,7 +21,9 @@ function renderFile(file){
                 </div> 
                 <div className="col-12">
                     <CardText>Created at: {file.SK}</CardText>
-                    <Button>Details</Button>
+                    <Link to={`/file/${fileId}`} className="text-decoration-none">
+                        <Button>Details</Button>
+                    </Link>
                 </div>                   
             </Card>
         </Col>

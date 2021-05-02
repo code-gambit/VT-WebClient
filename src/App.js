@@ -1,4 +1,3 @@
-import {useState} from 'react';
 import {BrowserRouter, Route, Switch, useHistory} from 'react-router-dom'
 
 import Header from "./Components/Header";
@@ -34,7 +33,7 @@ const Routing= () =>{
       <Route exact path="/files">
         <Files/>
       </Route>
-      <Route exact path="/file/:f_timestamp">
+      <Route exact path="/file/:fileId">
         <FileDetail/>
       </Route>
       <Route exact path="/profile">

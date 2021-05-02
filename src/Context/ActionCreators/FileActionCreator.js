@@ -1,6 +1,6 @@
 import * as ActionTypes from '../ActionTypes';
 import axios from 'axios';
-import env from "react-dotenv";
+import {APIKEY,BACKENDURL} from '../../Config';
 
 export const fileStateLoading=()=>({
     type:ActionTypes.FILE_STATE_LOADING
@@ -60,14 +60,13 @@ export const loadFiles = async (fileDispatch) => {
     // ]
     var userId = JSON.parse(localStorage.getItem("auth")).PK.substring(5);    
     axios.get(
-        `user/${userId}/file`,
+        `${BACKENDURL}/user/${userId}/file`,
         {
             headers:{                                                
-                'X-Api-Key':env.APIKEY,                                                
+                'X-Api-Key':APIKEY,                                                
             }
         }       
     ).then((response)=>{
-        //alert(JSON.stringify(response));
         fileDispatch(fileStateADD(response.data.body.items))
     }, (error) => {
         console.log(error);

@@ -12,7 +12,7 @@ const Header = () => {
     const [state,setState] = useState(undefined);
     const [dropdownOpen,setDropdownOpen] = useState(false);
     const {authState, authDispatch} = useContext(AuthContext);
-    const {fileState, fileDispatch} = useContext(FileContext);
+    const {fileDispatch} = useContext(FileContext);
     const history=useHistory()
     useEffect(() =>{
         if (!authState.auth.PK) {
@@ -44,9 +44,11 @@ const Header = () => {
     const handleLogin = (event) =>{
         authDispatch(AuthActionCreators.authStateUpdate(mock_user)); 
         localStorage.setItem("auth",JSON.stringify(mock_user))
-        history.push('/dashboard')       
+        history.push('/dashboard')     
+        toggleNav();  
     }
     const handleLogout = (event) =>{
+        toggleNav();  
         authDispatch(AuthActionCreators.authStateUpdate({}));
         localStorage.clear()
         history.push('/')
