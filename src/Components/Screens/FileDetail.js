@@ -3,8 +3,12 @@ import { Card, Button, CardTitle, CardText, Row, Col} from 'reactstrap';
 import { useParams } from 'react-router';
 import axios from 'axios';
 import { Loading } from '../Loading';
+import date from "date-and-time"
 
-function renderFile(file){    
+function renderFile(file){
+    var fileId=file.SK.slice(5);
+    var now=date.parse(fileId,'YYYY-MM-DD-hh-mm-ss');
+    now=date.format(now, 'ddd, MMM DD, YYYY H:mm');
     return(
         <Col sm="12" className="p-2">
             <Card body>
@@ -16,16 +20,16 @@ function renderFile(file){
                         <span className="rounded-pill primary-text mx-1 col-3 file-type-badge">{file.type}</span>
                         <span className="rounded-pill primary-text mx-1 col-3 file-size-badge">{file.size} MB</span>
                     </div>
-                </div> 
+                </div>
                 <div className="col-12">
-                    <CardText>Created at: {file.SK}</CardText>                    
-                </div>                   
+                    <CardText>Created at: {now}</CardText>
+                </div>
             </Card>
         </Col>
     )
 }
 
-function renderURL(url){    
+function renderURL(url){
     return(
         <Col sm="12" className="p-2" key={url.SK}>
             <Card body>
@@ -34,15 +38,15 @@ function renderURL(url){
                         <CardTitle tag="h5">www.dummyURL/{url.GS1_PK}.com</CardTitle>
                     </div>
                     <div className="float-right">
-                        <span className="mx-1">{url.visible?<span className="fa fa-eye"></span>:<span className="fa fa-eye-slash"></span>}</span>    
+                        <span className="mx-1">{url.visible?<span className="fa fa-eye"></span>:<span className="fa fa-eye-slash"></span>}</span>
                         <span className="fa fa-edit mx-1"></span>
                         <span className="fa fa-trash mx-1"></span>
                     </div>
-                </div> 
+                </div>
                 <div className="col-12">
                     <CardText>Clicks Left: {url.clicks_left}</CardText>
                     <CardText>Created at: {url.SK}</CardText>
-                </div>                   
+                </div>
             </Card>
         </Col>
     )
@@ -52,25 +56,25 @@ function renderURL(url){
 const FileDetail = () => {
     const [fileId,setFileId] = useState(useParams().fileId);
     const [fileData,setFileData] = useState(undefined);
-    useEffect(() =>{        
+    useEffect(() =>{
         var userId = JSON.parse(localStorage.getItem("auth")).PK.substring(5);
         axios.get(
             `${process.env.REACT_APP_BACKENDURL}/user/${userId}/file/${fileId}`,
             {
-                headers:{                                                
-                    'x-api-key':process.env.REACT_APP_APIKEY,                                                
+                headers:{
+                    'x-api-key':process.env.REACT_APP_APIKEY,
                 }
-            }       
+            }
         ).then((response)=>{
             setFileData(response.data.body)
         }, (error) => {
             console.log(error);
-        })          
+        })
     },[])
-    return ( 
-        <div className="container">            
+    return (
+        <div className="container">
             {/* {JSON.stringify(fileData)} */}
-            <>{fileData!=undefined&&fileData.file_data!=undefined?                
+            <>{fileData!=undefined&&fileData.file_data!=undefined?
                 <div>
                 {renderFile(fileData.file_data)}
                 <h2 className="text-center">URL List</h2>
@@ -85,15 +89,15 @@ const FileDetail = () => {
                 :
                 <h4 className="text-center">No URL available</h4>
                 }</>
-                
+
                 </div>
             :
-                <div className="text-center">                    
+                <div className="text-center">
                     <Loading/>
                 </div>
-            }</>           
+            }</>
         </div>
      );
 }
- 
+
 export default FileDetail;

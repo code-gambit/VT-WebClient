@@ -12,6 +12,7 @@
     "axios": "^0.21.1",
     "bootstrap": "^4.6.0",
     "bootstrap-social": "^5.1.1",
+    "date-and-time": "^1.0.0",
     "dotenv": "^8.2.0",
     "enzyme": "^3.11.0",
     "font-awesome": "^4.7.0",
