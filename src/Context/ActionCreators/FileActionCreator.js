@@ -1,6 +1,5 @@
 import * as ActionTypes from '../ActionTypes';
 import axios from 'axios';
-import env from "react-dotenv";
 
 export const fileStateLoading=()=>({
     type:ActionTypes.FILE_STATE_LOADING
@@ -58,16 +57,15 @@ export const loadFiles = async (fileDispatch) => {
     //         type:"video"
     //     }
     // ]
-    var userId = JSON.parse(localStorage.getItem("auth")).PK.substring(5);    
+    var userId = JSON.parse(localStorage.getItem("auth")).PK.substring(5);
     axios.get(
-        `user/${userId}/file`,
+        `${process.env.REACT_APP_BACKENDURL}/user/${userId}/file`,
         {
             headers:{                                                
-                'X-Api-Key':env.APIKEY,                                                
+                'X-Api-Key':process.env.REACT_APP_APIKEY,                                                
             }
         }       
     ).then((response)=>{
-        //alert(JSON.stringify(response));
         fileDispatch(fileStateADD(response.data.body.items))
     }, (error) => {
         console.log(error);

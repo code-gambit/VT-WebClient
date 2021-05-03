@@ -1,4 +1,3 @@
-import {useState} from 'react';
 import {BrowserRouter, Route, Switch, useHistory} from 'react-router-dom'
 
 import Header from "./Components/Header";
@@ -12,8 +11,7 @@ import About from './Components/Screens/About';
 import './App.css';
 import AuthContextProvider from './Context/Contexts/AuthContext';
 import FileContextProvider from './Context/Contexts/FileContext';
-
-
+require('dotenv').config()
 const Routing= () =>{
   const history=useHistory()
   const auth = JSON.parse(localStorage.getItem("auth"));
@@ -34,7 +32,7 @@ const Routing= () =>{
       <Route exact path="/files">
         <Files/>
       </Route>
-      <Route exact path="/file/:f_timestamp">
+      <Route exact path="/file/:fileId">
         <FileDetail/>
       </Route>
       <Route exact path="/profile">
