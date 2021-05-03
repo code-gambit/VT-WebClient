@@ -11,8 +11,7 @@ import About from './Components/Screens/About';
 import './App.css';
 import AuthContextProvider from './Context/Contexts/AuthContext';
 import FileContextProvider from './Context/Contexts/FileContext';
-
-
+require('dotenv').config()
 const Routing= () =>{
   const history=useHistory()
   const auth = JSON.parse(localStorage.getItem("auth"));

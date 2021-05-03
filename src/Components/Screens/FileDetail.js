@@ -2,7 +2,6 @@ import React, { useState, useEffect, useContext } from 'react';
 import { Card, Button, CardTitle, CardText, Row, Col} from 'reactstrap';
 import { useParams } from 'react-router';
 import axios from 'axios';
-import {APIKEY,BACKENDURL} from '../../Config';
 import { Loading } from '../Loading';
 
 function renderFile(file){    
@@ -56,10 +55,10 @@ const FileDetail = () => {
     useEffect(() =>{        
         var userId = JSON.parse(localStorage.getItem("auth")).PK.substring(5);
         axios.get(
-            `${BACKENDURL}/user/${userId}/file/${fileId}`,
+            `${process.env.REACT_APP_BACKENDURL}/user/${userId}/file/${fileId}`,
             {
                 headers:{                                                
-                    'x-api-key':APIKEY,                                                
+                    'x-api-key':process.env.REACT_APP_APIKEY,                                                
                 }
             }       
         ).then((response)=>{
