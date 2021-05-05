@@ -6,9 +6,11 @@ import 'bootstrap-social/bootstrap-social.css';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import { ToastContainer} from 'react-toastify';
 ReactDOM.render(
   <React.StrictMode>
     <App />
+    <ToastContainer position="bottom-center" pauseOnFocusLoss={false} autoClose={2000}/>
   </React.StrictMode>,
   document.getElementById('root')
 );
