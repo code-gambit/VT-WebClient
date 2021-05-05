@@ -18,7 +18,7 @@ function renderFile(file){
                         <CardTitle tag="h5">{file.LS1_SK}</CardTitle>
                     </div>
                     <div className="float-right">
-                        <span className="rounded-pill primary-text mx-1 col-3 file-type-badge">{file.type}</span>
+                        <span className="rounded-pill primary-text mx-1 col-3 file-type-badge">{file.f_type}</span>
                         <span className="rounded-pill primary-text mx-1 col-3 file-size-badge">{file.size} MB</span>
                     </div>
                 </div>
