@@ -49,10 +49,10 @@ const Files = () => {
                 Total Files: {fileState.files.length}
             </div>
             <Button onClick={toggleFileFormModal}>Add File</Button>
-            <Modal isOpen={isFileFormOpen} toggle={toggleFileFormModal}>
+            <Modal isOpen={isFileFormOpen} toggle={toggleFileFormModal} className="modal-dialog-centered">
                 <ModalHeader toggle={toggleFileFormModal}>File Form</ModalHeader>
                 <ModalBody>
-                    <FileForm/>
+                    <FileForm toggleFileFormModal={toggleFileFormModal}/>
                 </ModalBody>
             </Modal>
 
