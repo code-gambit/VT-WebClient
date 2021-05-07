@@ -59,7 +59,7 @@ const FileDetail = () => {
             history.push('/files')            
         }, (error) => {
             history.push('/files')
-            toast.error(error)            
+            toast.error(error.message)            
         }) 
         toggleFileDeleteModal();        
     }
