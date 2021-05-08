@@ -14,7 +14,7 @@ if((typeof TextDecoder==='undefined' || typeof TextEncoder==='undefined') && typ
 const ipfs=require("ipfs-http-client")
 const client=ipfs({host:'ipfs.infura.io',port:5001,protcol:'https'})
 
-const FileForm = ({toggleFileFormModal}) => {
+const FileForm = ({toggleFileFormModal,setCurrentPage}) => {
     const {fileDispatch} = useContext(FileContext)
     const {authState} = useContext(AuthContext);
     const [name,setName] = useState(undefined);    
@@ -72,7 +72,10 @@ const FileForm = ({toggleFileFormModal}) => {
             authState.auth.storage_used=parseFloat(authState.auth.storage_used.toFixed(4))
             AuthActionCreators.authStateUpdate(authState);
             localStorage.setItem("auth",JSON.stringify(authState.auth))             
-            FileActionCreators.loadFiles(fileDispatch);              
+            fileDispatch(FileActionCreators.fileStateUpdateCurrentPage(1));
+            fileDispatch(FileActionCreators.fileStateAddLastEKMap({}));
+            FileActionCreators.loadFiles(fileDispatch,1);      
+            setCurrentPage(1);        
         }, (error) => {
             toast.error(error.message);
         })

@@ -9,64 +9,46 @@ export const fileStateFailed=()=>({
     type:ActionTypes.FILE_STATE_FAILED
 })
 
-export const fileStateADD=(fileData)=>({
-    type:ActionTypes.FILE_STATE_ADD,
+export const fileStateAddFiles=(fileData)=>({
+    type:ActionTypes.FILE_STATE_ADD_FILES,
     payload:fileData
 })
 
-export const fileStateUpdate=(fileData)=>({
-    type:ActionTypes.FILE_STATE_UPDATE,
+export const fileStateUpdateFiles=(fileData)=>({
+    type:ActionTypes.FILE_STATE_UPDATE_FILES,
     payload:fileData
+})
+
+export const fileStateUpdateCurrentPage=(pageNumber)=>({
+    type:ActionTypes.FILE_STATE_UPDATE_CURRENT_PAGE,
+    payload:pageNumber
+})
+export const fileStateAddLastEKMap=(payload)=>({
+    type:ActionTypes.FILE_STATE_ADD_LASTEK_MAP,
+    payload:{}
+})
+export const fileStateUpdateLastEKMap=(currentPage,lastEvaluatedKey)=>({
+    type:ActionTypes.FILE_STATE_UPDATE_LASTEK_MAP,
+    payload:{currentPage,lastEvaluatedKey}
 })
 
 export const addFile=(fileData,fileDispatch)=>{
-    // var fileData={
-    //     PK:"USER#12345",
-    //     SK:"FILE#12345",
-    //     LSI_PK:name,
-    //     hash:hash,
-    //     size:12,
-    //     type:type,
-    // }
-    fileDispatch(fileStateUpdate(fileData))
+    fileDispatch(fileStateUpdateFiles(fileData))
 }
 
-export const loadFiles = async (fileDispatch) => {
-    
-    // var files =[
-    //     {
-    //         PK:"USER#123",
-    //         SK:"FILE#454",
-    //         LS1_SK:"File1",
-    //         hash:"878",
-    //         size:"12",
-    //         type:"audio"
-    //     },{
-    //         PK:"USER#123",
-    //         SK:"FILE#454",
-    //         LS1_SK:"File2",
-    //         hash:"879",
-    //         size:"12",
-    //         type:"audio"
-    //     },{
-    //         PK:"USER#123",
-    //         SK:"FILE#454",
-    //         LS1_SK:"File3",
-    //         hash:"879",
-    //         size:"0.04",
-    //         type:"video"
-    //     }
-    // ]
+export const loadFiles = async (fileDispatch,currentPage,lastEvaluatedKey) => {
     var userId = JSON.parse(localStorage.getItem("auth")).PK.substring(5);
     axios.get(
         `${process.env.REACT_APP_BACKENDURL}/user/${userId}/file`,
         {
+            params:{LastEvaluatedKey:lastEvaluatedKey},
             headers:{                                                
                 'X-Api-Key':process.env.REACT_APP_APIKEY,                                                
             }
         }       
     ).then((response)=>{
-        fileDispatch(fileStateADD(response.data.body.items))
+        fileDispatch(fileStateAddFiles(response.data.body.items))
+        fileDispatch(fileStateUpdateLastEKMap(currentPage,response.data.body.LastEvaluatedKey))       
     }, (error) => {
         console.log(error);
     })    

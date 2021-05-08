@@ -6,7 +6,9 @@ const FileContextProvider = (props) => {
     const [fileState, fileDispatch] = useReducer(fileReducer,{
         isLoading:true,
         errMess:null,
-        files:[]
+        files:[],
+        currentPage:1,
+        lastEKMap:{}
     })
     return ( 
         <FileContext.Provider value={{fileState,fileDispatch}}>

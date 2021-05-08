@@ -5,14 +5,11 @@ import { Navbar, NavbarBrand, Nav, NavbarToggler,
 import { NavLink, useHistory} from 'react-router-dom';
 import { AuthContext } from '../Context/Contexts/AuthContext';
 import * as AuthActionCreators from '../Context/ActionCreators/AuthActionCreater';
-import * as FileActionCreators from '../Context/ActionCreators/FileActionCreator';
-import { FileContext } from '../Context/Contexts/FileContext';
 const Header = () => {
     const [isNavOpen,setIsNavOpen] = useState(false);
     const [state,setState] = useState(undefined);
     const [dropdownOpen,setDropdownOpen] = useState(false);
     const {authState, authDispatch} = useContext(AuthContext);
-    const {fileDispatch} = useContext(FileContext);
     const history=useHistory()
     useEffect(() =>{
         if (!authState.auth.PK) {
@@ -22,7 +19,6 @@ const Header = () => {
         }  
         else if(authState.auth.PK) {
             setState(authState.auth);
-            FileActionCreators.loadFiles(fileDispatch);
         }
     },[authState]);
     

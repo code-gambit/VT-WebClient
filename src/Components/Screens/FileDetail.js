@@ -17,7 +17,6 @@ const FileDetail = () => {
     const [fileData,setFileData] = useState(undefined);
     const [isFileDeleteModalOpen,setIsFileDeleteModalOpen] = useState(false);
     const [isFileDeleteTipOpen,setIsFileDeleteTipOpen] = useState(false);        
-    const [isURLDeleteModalOpen,setIsURLDeleteModalOpen] = useState(false);
     const history=useHistory()
     const {fileDispatch} = useContext(FileContext);
 
