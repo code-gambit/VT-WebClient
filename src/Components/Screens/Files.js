@@ -1,73 +1,92 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Card, Button, CardTitle, CardText, Row, Col,
-    Modal,ModalHeader, ModalBody } from 'reactstrap';
+    Modal,ModalHeader, ModalBody, 
+    Pagination, PaginationItem, PaginationLink } from 'reactstrap';
 import { FileContext } from '../../Context/Contexts/FileContext';
+import * as FileActionCreators from '../../Context/ActionCreators/FileActionCreator';
 import FileForm from './FileForm';
-import {Link} from 'react-router-dom';
-import date from "date-and-time"
-
-function renderFile(file){
-    const fileId=file.SK.substring(5)
-    var now=date.parse(fileId,'YYYY-MM-DD-hh-mm-ss');
-    now=date.format(now, 'ddd, MMM DD, YYYY H:mm');
-    return(
-        <Col sm="6" className="p-2" key={file.SK}>
-            <Card body>
-                <div className="col-12">
-                    <div className="float-left">
-                        <CardTitle tag="h5">{file.LS1_SK}</CardTitle>
-                    </div>
-                    <div className="float-right">
-                        <span className="rounded-pill primary-text mx-1 col-3 file-type-badge">{file.f_type}</span>
-                        <span className="rounded-pill primary-text mx-1 col-3 file-size-badge">{file.size} MB</span>
-                    </div>
-                </div>
-                <div className="col-12">
-                    <CardText>Created at: {now}</CardText>
-                    <Link to={`/file/${fileId}`} className="text-decoration-none">
-                        <Button>Details</Button>
-                    </Link>
-                </div>
-            </Card>
-        </Col>
-    )
-}
+import RenderFile from './RenderFile';
+import { Loading } from '../Loading';
 
 const Files = () => {
     const {fileState,fileDispatch} = useContext(FileContext);
     const [isFileFormOpen,setIsFileFormOpen] = useState(false);
-    // useEffect(()=>{
-    //     FileActionCreators.loadFiles(fileDispatch);
-    // },[])
+    const [currentPage, setCurrentPage] = useState(fileState.currentPage);
+    const [lastEKMap, setLastEKMap] = useState(fileState.lastEKMap);
+    useEffect(()=>{
+        FileActionCreators.loadFiles(fileDispatch,fileState.currentPage,fileState.lastEKMap[currentPage-1]);        
+    },[])
 
+    useEffect(() => {
+        window.scrollTo({ behavior: 'smooth', top: '0px' });
+        fileDispatch(FileActionCreators.fileStateUpdateCurrentPage(currentPage));
+        FileActionCreators.loadFiles(fileDispatch,currentPage,fileState.lastEKMap[currentPage-1]);        
+    }, [currentPage]);
+
+    useEffect(()=>{
+        setCurrentPage(fileState.currentPage);
+        setLastEKMap(fileState.lastEKMap);        
+    },fileState)
+    
     const toggleFileFormModal = ()=>{
-        setIsFileFormOpen(!isFileFormOpen)
+        setIsFileFormOpen(!isFileFormOpen)        
     }
+    function goToNextPage(){        
+        setCurrentPage(fileState.currentPage+1);                  
+    }
+    function goToPreviousPage(){
+        setCurrentPage(fileState.currentPage-1);        
+    }
+
+
     return (
         <div className="container">
-            <div>
-                Total Files: {fileState.files.length}
-            </div>
+            <h3 className="text-center">Your Files</h3>
+            Current Page: {fileState.currentPage}
             <Button onClick={toggleFileFormModal}>Add File</Button>
             <Modal isOpen={isFileFormOpen} toggle={toggleFileFormModal} className="modal-dialog-centered">
                 <ModalHeader toggle={toggleFileFormModal}>File Form</ModalHeader>
                 <ModalBody>
-                    <FileForm toggleFileFormModal={toggleFileFormModal}/>
+                    <FileForm toggleFileFormModal={toggleFileFormModal} setCurrentPage={setCurrentPage}/>
                 </ModalBody>
             </Modal>
-
-                <>{fileState.files.length!=0 ?
-                <Row>
-                    {fileState.files.map(file=>{
-                        return(
-                            renderFile(file)
-                        )
-                    })}
-                </Row>
-                :<div></div>
-            }</>
-
+            <div>    
+                <>{fileState.files.length!=0?
+                    <Row>
+                        {fileState.files.map(file=>{
+                            return(
+                                RenderFile(file)
+                            )
+                        })}                
+                    </Row>
+                :
+                    <Loading/>
+                }</>            
+                
+            </div>
+            <div className="d-flex justify-content-center">                
+                <Pagination aria-label="File Pagination">
+                    <PaginationItem>
+                        <PaginationLink onClick={goToPreviousPage} disabled={fileState.lastEKMap[fileState.currentPage-1]?false:true}>
+                            prev
+                        </PaginationLink>
+                    </PaginationItem>                    
+                    {/* {getPaginationGroup().map((item, index) => (
+                        <PaginationItem>
+                            <PaginationLink onClick={changePage}>
+                                {item}
+                            </PaginationLink>
+                        </PaginationItem>
+                    ))}    */}
+                    <PaginationItem>
+                        <PaginationLink onClick={goToNextPage} disabled={fileState.lastEKMap[fileState.currentPage]?false:true}>
+                            next
+                        </PaginationLink>
+                    </PaginationItem>                               
+                </Pagination>
+            </div>
         </div>
+
      );
 }
 
