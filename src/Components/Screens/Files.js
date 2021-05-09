@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Card, Button, CardTitle, CardText, Row, Col,
+import { Button, Row,
     Modal,ModalHeader, ModalBody, 
     Pagination, PaginationItem, PaginationLink } from 'reactstrap';
 import { FileContext } from '../../Context/Contexts/FileContext';
@@ -50,12 +50,12 @@ const Files = () => {
                     <FileForm toggleFileFormModal={toggleFileFormModal} setCurrentPage={setCurrentPage}/>
                 </ModalBody>
             </Modal>
-            <div>    
+            <div>
                 <>{fileState.files.length!=0?
                     <Row>
                         {fileState.files.map(file=>{
                             return(
-                                RenderFile(file)
+                                <RenderFile file={file}/>
                             )
                         })}                
                     </Row>
