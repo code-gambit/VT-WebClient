@@ -49,11 +49,11 @@ const FileForm = ({toggleFileFormModal,setCurrentPage}) => {
         setIsUploading(true);
         const buffer= await getBuffer(e.target[2].files[0])
         const res=await client.add(buffer)
-        const fileSize=(e.target[2].files[0].size)/1048576
+        const fileSize=(e.target[2].files[0].size)/1000;    // storing size in KBs.
         var fileData={
             f_type:e.target[1].value,
             hash:res.path,
-            size:parseFloat(fileSize.toFixed(4)),
+            size:parseFloat(fileSize.toFixed(3)),
             LS1_SK: e.target[0].value
         }
         const userId = JSON.parse(localStorage.getItem("auth")).PK.substring(5);
@@ -66,7 +66,7 @@ const FileForm = ({toggleFileFormModal,setCurrentPage}) => {
 
             }
         ).then((response)=>{                                    
-            toast.success(response.data.body)
+            toast.success("File upload success");
             toggleFileFormModal()
             authState.auth.storage_used+=fileData.size
             authState.auth.storage_used=parseFloat(authState.auth.storage_used.toFixed(4))

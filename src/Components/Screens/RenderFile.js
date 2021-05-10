@@ -58,6 +58,20 @@ const RenderFile = ({file}) => {
     var now=date.parse(fileId,'YYYY-MM-DD-hh-mm-ss');
     now=date.format(now, 'ddd, MMM DD, YYYY H:mm');
     var idTemp="id"+code(fileId)
+    
+    var file_size;
+    if(file.size>=1024*1024){
+        file_size = (file.size/1024).toFixed(2)+" GB";
+    }
+    else if(file.size>=1024){
+        file_size = (file.size/1024).toFixed(2)+" MB";
+    }
+    else if(file.size>1){
+        file_size= (file.size).toFixed(2)+" KB";
+    }
+    else{
+        file_size= (file.size).toFixed(3)+" KB";
+    }
     return(
         <Col sm="6" className="p-2" key={file.SK}>
             <Card body>
@@ -84,7 +98,7 @@ const RenderFile = ({file}) => {
                     <CardText>Created at: {now}
                         <br/>
                         <span className="rounded-pill primary-text mr-1 col-3 file-type-badge">{file.f_type}</span>
-                        <span className="rounded-pill primary-text ml-1 col-3 file-size-badge">{file.size} MB</span>
+                        <span className="rounded-pill primary-text ml-1 col-3 file-size-badge">{file_size}</span>
                     </CardText>                                          
                 </div>
                 <Modal isOpen={isFileShareModalOpen} toggle={toggleFileShareModal} className="modal-dialog-centered">
