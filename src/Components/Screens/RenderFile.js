@@ -125,9 +125,11 @@ const RenderFile = ({file}) => {
                 <Modal isOpen={isURLLinkModalOpen} toggle={toggleURLLinkModal} className="modal-dialog-centered">
                     <ModalHeader toggle={toggleURLLinkModal}>File Link</ModalHeader>
                     <ModalBody>  
-                    <Link to={process.env.REACT_APP_FRONTENDURL+"/"+URLId} className="text-decoration-none" onClick={toggleURLLinkModal}>                       
+                    {/* <Link to={process.env.REACT_APP_FRONTENDURL+"/"+URLId} className="text-decoration-none" onClick={toggleURLLinkModal}>                       
                         {process.env.REACT_APP_FRONTENDURL+"/"+URLId}   
-                    </Link>                       
+                    </Link>  */}
+                    <a href={process.env.REACT_APP_FRONTENDURL+"/"+URLId}>{process.env.REACT_APP_FRONTENDURL+"/"+URLId}</a>
+                    <span className="fa fa-clipboard mx-2" role="button" onClick={() => {navigator.clipboard.writeText(process.env.REACT_APP_FRONTENDURL+"/"+URLId)}}></span>                          
                     </ModalBody>                    
                 </Modal>       
             </Card>
