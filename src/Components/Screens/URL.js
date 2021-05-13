@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Card, Button, CardTitle, CardText, Row, Col,
-    Modal,ModalHeader, ModalBody, ModalFooter, Tooltip} from 'reactstrap';
+import { Card, Button, CardTitle, CardText, Col,
+    Modal,ModalHeader, ModalBody, ModalFooter} from 'reactstrap';
 import { useParams } from 'react-router';
 import axios from 'axios';
 import { useHistory} from 'react-router-dom';
@@ -75,7 +75,10 @@ const URL = ({url}) => {
                     <Card body>
                         <div className="col-12">
                             <div className="float-left">
-                                <CardTitle tag="h5">www.dummyURL/{url.GS1_PK}.com</CardTitle>
+                                <CardTitle tag="h5">
+                                    <a href={process.env.REACT_APP_FRONTENDURL+"/"+url.GS1_PK}>{process.env.REACT_APP_FRONTENDURL+"/"+url.GS1_PK}</a>
+                                    <span className="fa fa-clipboard mx-2" role="button" onClick={() => {navigator.clipboard.writeText(process.env.REACT_APP_FRONTENDURL+"/"+url.GS1_PK)}}></span>    
+                                </CardTitle>
                             </div>
                             <div className="float-right">
                                 <span className="mx-1" role="button" onClick={(e)=>{URLUpdateUtil(url.visible)}}>{url.visible?<span className="fa fa-eye"></span>:<span className="fa fa-eye-slash"></span>}</span>

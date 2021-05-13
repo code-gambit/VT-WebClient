@@ -72,7 +72,7 @@ const Header = () => {
         <div>
             <Navbar dark expand="md">
                 <div className="container">                    
-                    <NavbarBrand className="mr-auto"><img src='logo.png'/> <span style={{fontFamily: "Lucida Console"}}> V-Transfer</span></NavbarBrand>
+                    <NavbarBrand className="mr-auto" href="/"><img src='logo.png'/> <span style={{fontFamily: "Lucida Console"}}> V-Transfer</span></NavbarBrand>
                     <NavbarToggler onClick={toggleNav} />
                         <>{
                             state?

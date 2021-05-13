@@ -7,15 +7,16 @@ import About from "./Components/Screens/About";
 import { useContext } from "react";
 import { Redirect, Route, Switch, useHistory } from "react-router-dom";
 import { AuthContext } from "./Context/Contexts/AuthContext";
+import Download from "./Components/Screens/Download";
 
 const Routing = () => {
   const history = useHistory();
   const { authState } = useContext(AuthContext);
   const auth = JSON.parse(localStorage.getItem("auth"));
   if (!auth) {
-    if (
-      history.location.pathname !== "/" &&
-      history.location.pathname !== "/about"
+    if (      
+      history.location.pathname !== "/about" &&
+      !history.location.pathname.includes("/")
     ) {
       history.push("/");
     }
@@ -29,6 +30,7 @@ const Routing = () => {
           <Route exact path="/file/:fileId" component={FileDetail} />
           <Route exact path="/profile" component={Profile} />
           <Route exact path="/about" component={About} />
+          <Route exact path="/:urlId" component={Download}/>
           <Route>
             <Redirect to="/dashboard" /> <Dashboard />
           </Route>
@@ -36,7 +38,8 @@ const Routing = () => {
       ) : (
         <Switch>
           <Route exact path="/about" component={About} />
-          <Route exact path="/" component={Homepage} />
+          <Route exact path="/:urlId" component={Download}/>
+          <Route exact path="/" component={Homepage} />          
         </Switch>
       )}
     </>
