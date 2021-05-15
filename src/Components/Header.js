@@ -1,5 +1,6 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { Navbar, NavbarBrand, Nav, NavbarToggler, 
+import { Auth } from "aws-amplify";
+import { Navbar, NavbarBrand, Nav, NavbarToggler,
     Collapse, NavItem, Button, Dropdown, DropdownToggle,
     DropdownMenu, DropdownItem } from 'reactstrap';
 import { NavLink, useHistory} from 'react-router-dom';
@@ -16,41 +17,31 @@ const Header = () => {
             const auth = JSON.parse(localStorage.getItem("auth"));
             if(auth) authDispatch(AuthActionCreators.authStateUpdate(auth));
             else setState(undefined);
-        }  
+        }
         else if(authState.auth.PK) {
             setState(authState.auth);
         }
     },[authState]);
-    
-    const mock_user={
-        PK:"USER#1234567892",
-        SK:"METADATA",
-        email:"user@abc.com",
-        type:"default",
-        storage_used:0,
-        thumbnail:"https://res.cloudinary.com/code-gambit/image/upload/v1619853352/User_thumbnails/mock_thumbnail_naahd8.webp"
-    }
+
     const toggleNav=()=> {
         setIsNavOpen(!isNavOpen)
     }
     const toggleDropdown=()=>{
         setDropdownOpen(!dropdownOpen)
     }
-    
+
     const handleLogin = (event) =>{
-        authDispatch(AuthActionCreators.authStateUpdate(mock_user)); 
-        localStorage.setItem("auth",JSON.stringify(mock_user))
-        history.push('/dashboard')     
-        toggleNav();  
+        history.push('/authenticate')
+        toggleNav();
     }
-    const handleLogout = (event) =>{
-        toggleNav();  
+    const handleLogout = async (event) =>{
+        toggleNav();
         authDispatch(AuthActionCreators.authStateUpdate({}));
         localStorage.clear()
         history.push('/')
     }
 
-    
+
     const dropdown=()=>{
         return(
             <Dropdown isOpen={dropdownOpen} toggle={toggleDropdown}>
@@ -68,45 +59,45 @@ const Header = () => {
             </Dropdown>
         )
     }
-    return ( 
+    return (
         <div>
             <Navbar dark expand="md">
-                <div className="container">                    
+                <div className="container">
                     <NavbarBrand className="mr-auto" href="/"><img src='logo.png'/> <span style={{fontFamily: "Lucida Console"}}> V-Transfer</span></NavbarBrand>
                     <NavbarToggler onClick={toggleNav} />
                         <>{
                             state?
-                                <Collapse isOpen={isNavOpen} navbar>                            
-                                    <Nav navbar>                               
+                                <Collapse isOpen={isNavOpen} navbar>
+                                    <Nav navbar>
                                         <NavItem>
                                             <NavLink className="nav-link" to='/dashboard'><span className="fa fa-file fa-lg"></span> Dashboard</NavLink>
-                                        </NavItem> 
+                                        </NavItem>
                                         <NavItem>
                                             <NavLink className="nav-link" to='/files'><span className="fa fa-file fa-lg"></span> Files</NavLink>
-                                        </NavItem>                                                                   
+                                        </NavItem>
                                         <NavItem>
                                             <NavLink className="nav-link" to='/about'><span className="fa fa-info fa-lg"></span> About</NavLink>
-                                        </NavItem>                                                                                                           
+                                        </NavItem>
                                     </Nav>
                                     <Nav className="ml-auto" navbar>
                                         <NavItem>
                                             <Button outline> {dropdown()}</Button>
                                         </NavItem>
-                                    </Nav>                                    
-                                </Collapse> 
-                        
+                                    </Nav>
+                                </Collapse>
+
                                 :
-                                <Collapse isOpen={isNavOpen} navbar>                            
-                                    <Nav navbar>                                                                                                                                          
+                                <Collapse isOpen={isNavOpen} navbar>
+                                    <Nav navbar>
                                         <NavItem>
                                             <NavLink className="nav-link" to='/about'><span className="fa fa-info fa-lg"></span> About</NavLink>
-                                        </NavItem>                                         
+                                        </NavItem>
                                     </Nav>
-                                    <Nav className="ml-auto" navbar>                                        
+                                    <Nav className="ml-auto" navbar>
                                         <NavItem>
                                             <Button outline onClick={()=>handleLogin()}><span className="fa fa-user fa-lg"></span> Login</Button>
-                                        </NavItem>                                  
-                                    </Nav>                                  
+                                        </NavItem>
+                                    </Nav>
                                 </Collapse>
                         }</>
                 </div>
@@ -114,5 +105,5 @@ const Header = () => {
         </div>
      );
 }
- 
+
 export default Header;
