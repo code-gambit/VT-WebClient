@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Card, Button, CardTitle, CardText, Row, Col,
-    Modal,ModalHeader, ModalBody, ModalFooter, Tooltip} from 'reactstrap';
+    Modal,ModalHeader, ModalBody, ModalFooter, Tooltip,
+    Pagination, PaginationItem, PaginationLink} from 'reactstrap';
 import { useParams } from 'react-router';
 import axios from 'axios';
 import { Loading } from '../Loading';
@@ -15,8 +16,11 @@ import URL from './URL';
 const FileDetail = () => {
     const [fileId,setFileId] = useState(useParams().fileId);
     const [fileData,setFileData] = useState(undefined);
+    const [URLData,setURLData] = useState(undefined);
     const [isFileDeleteModalOpen,setIsFileDeleteModalOpen] = useState(false);
-    const [isFileDeleteTipOpen,setIsFileDeleteTipOpen] = useState(false);        
+    const [isFileDeleteTipOpen,setIsFileDeleteTipOpen] = useState(false);    
+    const [currentPage,setCurrentPage] = useState(1);
+    const [lastEKMap,setLastEKMap] = useState({0:undefined});
     const history=useHistory()
     const {fileDispatch} = useContext(FileContext);
 
@@ -29,12 +33,46 @@ const FileDetail = () => {
                     'x-api-key':process.env.REACT_APP_APIKEY,
                 }
             }
-        ).then((response)=>{
-            setFileData(response.data.body)
+        ).then((response)=>{            
+            setFileData(response.data.body.file_data);
+            setURLData(response.data.body.url_data.items);
+            updateLastEKMap(currentPage,response.data.body.url_data.LastEvaluatedKey);
         }, (error) => {
             console.log(error);
         })
     },[])
+
+    useEffect(() => {
+        window.scrollTo({behavior: 'smooth', top: '0px'});
+        axios.get(
+            `${process.env.REACT_APP_BACKENDURL}/file/${fileId}/url`,
+            {   
+                params:{LastEvaluatedKey:lastEKMap[currentPage-1]},
+                headers:{
+                    'x-api-key':process.env.REACT_APP_APIKEY,
+                }
+            }
+        ).then((response)=>{
+            setURLData(response.data.body.items);
+            updateLastEKMap(currentPage,response.data.body.LastEvaluatedKey);            
+        }, (error) => {
+            console.log(error);
+        })
+    },[currentPage])
+
+    const updateLastEKMap = (key,value) =>{        
+        setLastEKMap({});
+        var temp = lastEKMap;
+        temp[key]=value;
+        setLastEKMap(temp);
+    }
+
+    function goToNextPage(){
+        setCurrentPage(currentPage+1);        
+    }
+    function goToPreviousPage(){
+        setCurrentPage(currentPage-1);
+    }
 
     const toggleFileDeleteModal = () =>{
         setIsFileDeleteModalOpen(!isFileDeleteModalOpen);
@@ -105,29 +143,40 @@ const FileDetail = () => {
                     <Button className="primary" onClick={fileDeleteUtil}>Delete</Button>
                 </ModalFooter>
             </Modal>            
-            <>{fileData!=undefined&&fileData.file_data!=undefined?
-                <div>
-                {renderFile(fileData.file_data)}
-                <h2 className="text-center">URL List</h2>
-                <>{fileData.url_data.items.length!=0?
-                    <Row>
-                    {fileData.url_data.items.map(url=>{
-                        // return(
-                        //     renderURL(url)
-                        // )
-                        return (
-                            <URL url={url}/>
-                        )
-                    })}
-                    </Row>
-                :
-                <h4 className="text-center">No URL available</h4>
-                }</>
-
+            <>{fileData!=undefined && fileData!=undefined?
+                <div>                    
+                    {renderFile(fileData)}
+                    <h2 className="text-center">URL List</h2>
+                    <>{URLData!=undefined && URLData.length!=0?
+                        <div>
+                            <Row>
+                            {URLData.map(url=>{
+                                return (
+                                    <URL url={url}/>
+                                )
+                            })}
+                            </Row>                            
+                            <div className="d-flex justify-content-center fixed-bottom">
+                                <Pagination aria-label="File Pagination">
+                                    <PaginationItem>
+                                        <PaginationLink onClick={goToPreviousPage} disabled={lastEKMap[currentPage-1]?false:true}>
+                                            prev
+                                        </PaginationLink>
+                                    </PaginationItem>
+                                    <PaginationItem>
+                                        <PaginationLink onClick={goToNextPage} disabled={lastEKMap[currentPage]?false:true}>
+                                            next
+                                        </PaginationLink>
+                                    </PaginationItem>                               
+                                </Pagination>
+                            </div>
+                        </div>                
+                    :
+                    <h4 className="text-center">No URL available</h4>
+                    }</>
                 </div>
-            :    
-                <Loading/>
-                
+            :   
+                <Loading/>             
             }</>
         </div>
      );
