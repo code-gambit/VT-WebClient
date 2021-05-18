@@ -5,9 +5,84 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background: #f2f2f2;
 }
-
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+a{
+  text-decoration: none;
+  color: inherit;
+}
+.routing-wrapper{
+  margin-bottom: 80px;
+}
+:root{
+  --primary-bg: #212529;
+  --primary-color:  #ffffff
+}
+.navbar-wrapper{
+  background:var(--primary-bg);
+  color: var(--primary-color);
+}
+.footer-wrapper{
+  background:var(--primary-bg);
+  color: var(--primary-color);
+}
+.search {
+  width: 100%;
+  position: relative;
+  display: flex;
+}
+.searchTerm {
+  width: 100%;
+  border: none;
+  padding: 5px;
+  height: 36px;
+  border-radius: 5px 0 0 5px;
+  outline: none;
+  color: #9DBFAF;
+}
+.searchTerm:focus{
+  color: #00B4CC;
+  border: 1px solid #00B4CC;
+  border-right: none;
+}
+.searchButton {
+  width: 40px;
+  height: 36px;
+  border: 1px solid #00B4CC;
+  background: #00B4CC;
+  text-align: center;
+  color: #fff;
+  border-radius: 0 5px 5px 0;
+  cursor: pointer;
+  font-size: 20px;
+}
+.top-wrapper{
+  background: linear-gradient(to right, #e55d87, #5fc3e4);
+  background-image: url("https://res.cloudinary.com/code-gambit/image/upload/v1621277824/Web%20App/top-wrapper_o7mevz.png");
+  background-size: cover;
+  background-position: center; 
+}
+.top-wrapper h1{
+  font-size: 35px;
+  letter-spacing: 1px;
+  max-width: 60%;
+  font-family: "Ivar Headline","Ivar Headline Subset","Times New Roman",serif;
+  font-weight: bold;
+}
+.card-wrapper{
+  box-shadow: rgb(209 209 213) 0px 5px 15px;
+}
+.card-wrapper:hover{
+  transform: scale(1.05);
+  box-shadow: 0 10px 20px rgba(0,0,0,.12), 0 4px 8px rgba(0,0,0,.06);
+}
+@media screen and (max-width: 680px) {
+  .top-wrapper h1{
+    font-size: 25px;
+    max-width: 80%;
+  }
 }

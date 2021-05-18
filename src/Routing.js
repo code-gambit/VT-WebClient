@@ -15,10 +15,7 @@ const Routing = () => {
   const { authState } = useContext(AuthContext);
   const auth = JSON.parse(localStorage.getItem("auth"));
   if (!auth) {
-    if (
-      history.location.pathname !== "/about" &&history.location.pathname !== "/authenticate"
-
-    ) {
+    if (history.location.pathname !== "/about" &&history.location.pathname !== "/authenticate" &&!history.location.pathname.includes("/")) {
       history.push("/");
     }
   }
