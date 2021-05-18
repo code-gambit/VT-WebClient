@@ -74,7 +74,7 @@ const RenderFile = ({file}) => {
     }
     return(
         <Col sm="6" className="p-2" key={file.SK}>
-            <Card body>
+            <Card body className="card-wrapper">
                 <div className="col-12">
                     <div className="float-left">
                         <CardTitle tag="h5">{file.LS1_SK}</CardTitle>
