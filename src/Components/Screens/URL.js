@@ -60,19 +60,8 @@ const URL = ({url}) => {
     }    
     return (   
         <>{URLId?
-            <div className="container">
-                <Modal isOpen={isURLDeleteModalOpen} toggle={toggleURLDeleteModal} className="modal-dialog-centered">
-                    <ModalHeader toggle={toggleURLDeleteModal}>Warning!</ModalHeader>
-                    <ModalBody>
-                        Do want to delete the URL?                        
-                    </ModalBody>
-                    <ModalFooter>
-                        <Button className="secondary" onClick={toggleURLDeleteModal}>Close</Button>
-                        <Button className="primary" onClick={URLDeleteUtil}>Delete</Button>
-                    </ModalFooter>
-                </Modal>     
-                <Col sm="12" className="p-2" key={url.SK}>
-                    <Card body>
+                <Col sm="6" className="p-2" key={url.SK}>
+                    <Card body className="url-card-wrapper">
                         <div className="col-12">
                             <div className="float-left">
                                 <CardTitle tag="h5">
@@ -91,11 +80,21 @@ const URL = ({url}) => {
                             <CardText>Created at: {getDate(url.SK)}</CardText>
                         </div>
                     </Card>
-                </Col>
-            </div>
+                </Col>            
         :
             <div></div>
-        }</>      
+        }
+        <Modal isOpen={isURLDeleteModalOpen} toggle={toggleURLDeleteModal} className="modal-dialog-centered">
+            <ModalHeader toggle={toggleURLDeleteModal}>Warning!</ModalHeader>
+            <ModalBody>
+                Do want to delete the URL?                        
+            </ModalBody>
+            <ModalFooter>
+                <Button className="secondary" onClick={toggleURLDeleteModal}>Close</Button>
+                <Button className="primary" onClick={URLDeleteUtil}>Delete</Button>
+            </ModalFooter>
+        </Modal>
+        </>      
         
      );
 }

@@ -74,7 +74,7 @@ const RenderFile = ({file}) => {
     }
     return(
         <Col sm="6" className="p-2" key={file.SK}>
-            <Card body className="card-wrapper">
+            <Card body className="file-card-wrapper">
                 <div className="col-12">
                     <div className="float-left">
                         <CardTitle tag="h5">{file.LS1_SK}</CardTitle>
@@ -85,7 +85,7 @@ const RenderFile = ({file}) => {
                             Share File
                         </Tooltip>                   
                         <Link to={`/file/${fileId}`} className="text-decoration-none">                        
-                            <Button className="rounded-circle ml-2" id={"viewMore"+idTemp}>
+                            <Button className="rounded-circle ml-2 badge-dark" id={"viewMore"+idTemp}>
                                 <span className="fa fa-angle-double-right"></span>
                                 <Tooltip placement="right" isOpen={isFileViewMoreTipOpen} target={"viewMore"+idTemp} toggle={toggleFileViewMoreTip}>
                                     File Details
@@ -97,8 +97,8 @@ const RenderFile = ({file}) => {
                 <div className="col-12">
                     <CardText>Created at: {now}
                         <br/>
-                        <span className="rounded-pill primary-text mr-1 col-3 file-type-badge">{file.f_type}</span>
-                        <span className="rounded-pill primary-text ml-1 col-3 file-size-badge">{file_size}</span>
+                        {/* <span className="rounded-pill primary-text mr-1  file-type-badge">{file.f_type}</span>
+                        <span className="rounded-pill primary-text ml-1  file-size-badge">{file_size}</span> */}
                     </CardText>                                          
                 </div>
                 <Modal isOpen={isFileShareModalOpen} toggle={toggleFileShareModal} className="modal-dialog-centered">

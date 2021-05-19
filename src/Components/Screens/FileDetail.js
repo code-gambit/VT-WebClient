@@ -12,6 +12,7 @@ import * as FileActionCreators from '../../Context/ActionCreators/FileActionCrea
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import URL from './URL';
+import getFileSize from '../../utils/fileSize';
 
 const FileDetail = () => {
     const [fileId,setFileId] = useState(useParams().fileId);
@@ -107,22 +108,26 @@ const FileDetail = () => {
         now=date.format(now, 'ddd, MMM DD, YYYY H:mm');
         return(
             <Col sm="12" className="p-2">
-                <Card body>
+                <Card body className="file-card-wrapper">
                     <div className="col-12">
                         <div className="float-left">
                             <CardTitle tag="h5">{file.LS1_SK}</CardTitle>
                         </div>
                         <div className="float-right">
-                            <span className="rounded-pill primary-text mx-1 col-3 file-type-badge">{file.f_type}</span>
-                            <span className="rounded-pill primary-text mx-1 col-3 file-size-badge">{file.size} MB</span>
+                            <span className="badge badge-warning mx-2">{file.f_type}</span>
+                            <span className="badge badge-warning">{getFileSize(file.size)}</span>                            
+                        </div>
+                    </div>
+                    <div className="col-12">
+                        <div className="float-left">
+                            <CardText>Created at: {now}</CardText>
+                        </div>
+                        <div className="float-right">
                             <span className="fa fa-trash mx-1" role="button" onClick={(e)=>{toggleFileDeleteModal()}} id="FileDelete"></span>
                             <Tooltip placement="right" isOpen={isFileDeleteTipOpen} target="FileDelete" toggle={toggleFileDeleteTip}>
                                 Delete File
                             </Tooltip>
                         </div>
-                    </div>
-                    <div className="col-12">
-                        <CardText>Created at: {now}</CardText>
                     </div>
                 </Card>
             </Col>
@@ -148,15 +153,15 @@ const FileDetail = () => {
                     {renderFile(fileData)}
                     <h2 className="text-center">URL List</h2>
                     <>{URLData!=undefined && URLData.length!=0?
-                        <div>
+                        <div className="col-12">
                             <Row>
-                            {URLData.map(url=>{
-                                return (
-                                    <URL url={url}/>
-                                )
-                            })}
+                                {URLData.map(url=>{
+                                    return (
+                                        <URL url={url}/>
+                                    )
+                                })}
                             </Row>                            
-                            <div className="d-flex justify-content-center fixed-bottom">
+                            <div className="d-flex justify-content-center">
                                 <Pagination aria-label="File Pagination">
                                     <PaginationItem>
                                         <PaginationLink onClick={goToPreviousPage} disabled={lastEKMap[currentPage-1]?false:true}>

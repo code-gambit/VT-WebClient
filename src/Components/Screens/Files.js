@@ -42,23 +42,36 @@ const Files = () => {
     return (
         <div className="container">
             <h3 className="text-center">Your Files</h3>
-            Current Page: {fileState.currentPage}
-            <Button onClick={toggleFileFormModal}>Add File</Button>
+            <div className="d-flex justify-content-between align-items-center">                
+                <Button onClick={toggleFileFormModal}>Upload File</Button>
+                <span>Showing Page: <span className="badge badge-dark">{fileState.currentPage}</span></span>
+            </div>
             <Modal isOpen={isFileFormOpen} toggle={toggleFileFormModal} className="modal-dialog-centered">
-                <ModalHeader toggle={toggleFileFormModal}>File Form</ModalHeader>
-                <ModalBody>
+                {/* <ModalHeader toggle={toggleFileFormModal}>Upload your files</ModalHeader>                 */}
+                <ModalBody className="text-center modal-wrapper">
+                    <h4 >Upload your files</h4>
                     <FileForm toggleFileFormModal={toggleFileFormModal} setCurrentPage={setCurrentPage}/>
                 </ModalBody>
             </Modal>
             <div>
-                <>{fileState.files.length!=0?
-                    <Row>
-                        {fileState.files.map(file=>{
-                            return(
-                                <RenderFile file={file}/>
-                            )
-                        })}                
-                    </Row>
+                <>{!fileState.isLoading?
+                    
+                    <div>
+                        {fileState.files.length==0?
+                            <div className="text-center">
+                                <i class="fa fa-folder-open fa-lg"></i>
+                                <p>Upload Some Files</p>
+                            </div>
+                        :
+                            <Row>
+                                {fileState.files.map(file=>{
+                                    return(
+                                        <RenderFile file={file}/>
+                                    )
+                                })}
+                            </Row>
+                        }         
+                    </div>           
                 :
                     <Loading/>
                 }</>            
