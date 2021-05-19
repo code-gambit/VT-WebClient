@@ -37,6 +37,7 @@ export const addFile=(fileData,fileDispatch)=>{
 }
 
 export const loadFiles = async (fileDispatch,currentPage,lastEvaluatedKey) => {
+    fileDispatch(fileStateLoading());
     var userId = JSON.parse(localStorage.getItem("auth")).PK.substring(5);
     axios.get(
         `${process.env.REACT_APP_BACKENDURL}/user/${userId}/file`,

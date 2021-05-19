@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import * as FileActionCreators from '../../Context/ActionCreators/FileActionCreator';
 import * as AuthActionCreators from '../../Context/ActionCreators/AuthActionCreater';
 import { FileContext } from '../../Context/Contexts/FileContext';
@@ -6,6 +6,9 @@ import { Button, Form, FormGroup, Label, Input, FormText } from 'reactstrap';
 import { AuthContext } from '../../Context/Contexts/AuthContext';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import {useDropzone} from 'react-dropzone';
+import getFileSize from '../../utils/fileSize';
+import getFileType from '../../utils/fileType';
 
 if((typeof TextDecoder==='undefined' || typeof TextEncoder==='undefined') && typeof require!=='undefined'){
     global.TextDecoder = require('util').TextDecoder
@@ -14,13 +17,33 @@ if((typeof TextDecoder==='undefined' || typeof TextEncoder==='undefined') && typ
 const ipfs=require("ipfs-http-client")
 const client=ipfs({host:'ipfs.infura.io',port:5001,protcol:'https'})
 
+
+const baseStyle = {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    height: "30vh",
+    background: "linear-gradient(-45deg, #8e9eab, #eef2f3,  #6dd5fa, #ffffff)",
+    animation: "gradient 15s ease infinite",
+    backgroundSize: "400% 400%",
+    borderRadius:"10px",
+    border: "2px dashed #00ccff"
+};
+const img = {
+    display: 'block',
+    height: '50px',
+    width: '50px'
+};
 const FileForm = ({toggleFileFormModal,setCurrentPage}) => {
     const {fileDispatch} = useContext(FileContext)
     const {authState} = useContext(AuthContext);
-    const [name,setName] = useState(undefined);    
-    const [type,setType] = useState(undefined);    
-    const [file,setFile] = useState(undefined);    
+    const [files,setFiles] = useState([]);    
     const [isUploading,setIsUploading] = useState(false);
+    useEffect(()=>{
+        for(var i=0;i<files.length;i++){
+            handleSubmit(files[i],i);
+        }
+    },[files])
 
     async function getBuffer(file){
         const reader=new window.FileReader();
@@ -32,29 +55,19 @@ const FileForm = ({toggleFileFormModal,setCurrentPage}) => {
           }
         })
     }
-    const handleSubmit = async (e)=>{
-        e.preventDefault();
-        if(name==undefined){
-            toast.warning("Please give your file a name");
-            return;
-        }
+    const handleSubmit = async (file,i)=>{     
+        const index=i
         if(file==undefined){
             toast.warning("Please select a file");
             return;
         }
-        if(type==undefined){
-            toast.warning("Please select file type");
-            return;
-        }        
-        setIsUploading(true);
-        const buffer= await getBuffer(e.target[2].files[0])
+        const buffer= await getBuffer(file) 
         const res=await client.add(buffer)
-        const fileSize=(e.target[2].files[0].size)/1000;    // storing size in KBs.
         var fileData={
-            f_type:e.target[1].value,
+            f_type:file.file_type,
             hash:res.path,
-            size:parseFloat(fileSize.toFixed(3)),
-            LS1_SK: e.target[0].value
+            size:parseFloat(file.file_size.toFixed(3)),
+            LS1_SK: file.file_name
         }
         const userId = JSON.parse(localStorage.getItem("auth")).PK.substring(5);
         axios.post(
@@ -66,8 +79,10 @@ const FileForm = ({toggleFileFormModal,setCurrentPage}) => {
 
             }
         ).then((response)=>{                                    
-            toast.success("File upload success");
-            toggleFileFormModal()
+            //toast.success(`${file.file_name} upload success`);            
+            const temp = files;
+            temp[index].file_status = "uploaded"
+            setFiles(temp);
             authState.auth.storage_used+=fileData.size
             authState.auth.storage_used=parseFloat(authState.auth.storage_used.toFixed(4))
             AuthActionCreators.authStateUpdate(authState);
@@ -77,48 +92,65 @@ const FileForm = ({toggleFileFormModal,setCurrentPage}) => {
             FileActionCreators.loadFiles(fileDispatch,1);      
             setCurrentPage(1);        
         }, (error) => {
-            toast.error(error.message);
+            toast.error(error.message);            
         })
-        setName("");        
-        setType("");
-        setFile("");
-        setIsUploading(false);
     }
-    return ( 
-        <>{!isUploading?
-            <Form onSubmit={handleSubmit}>
-                <FormGroup>
-                    <Label for="fileName">File Name</Label>
-                    <Input type="text" name="email" id="fileName" value={name} placeholder="File Name" 
-                        onChange={(e) => {setName(e.target.value)}}
-                    />
-                </FormGroup>
-                <FormGroup>
-                    <Label for="selectFileType">Select File Type</Label>
-                    <Input type="select" name="select" id="selectFileType" value={type} onChange={(e) => {setType(e.target.value)}}>
-                        <option>Document</option>
-                        <option>Audio</option>
-                        <option>Media</option>
-                        <option>PDF</option>
-                        <option>Other</option>
-                    </Input>
-                </FormGroup>
-                <FormGroup>
-                    <Label for="file">Choose File</Label>
-                    <Input type="file" name="file" id="file" onChange={(e) => {setFile(e.target.files[0])}} />
-                    <FormText color="muted">
-                        Any file uploaded will be added in IPFS server
-                    </FormText>
-                </FormGroup>
-                <Button>Submit</Button>
-            </Form>
-            :
-            <div className="text-center">
-                <span className="fa fa-spinner fa-pulse fa-3x fa-fw"></span>
-                <p>Uploading</p>
-                
+
+
+    const {getRootProps,getInputProps} = useDropzone({
+        onDrop: acceptedFiles => {
+            setFiles(acceptedFiles.map(file => Object.assign(file, {
+                preview: URL.createObjectURL(file),
+                file_type: getFileType(file.name),
+                file_name: file.name.split('.')[0],
+                file_size: file.size/1000,
+                file_status: "uploading"
+            })));
+        }
+    });
+    const thumbFile = (file) =>{
+        return(
+            <div className="d-flex justify-content-between align-items-center">
+                <div className="p-1 d-flex flex-row align-items-center">
+                    <img src={file.preview} style={img} alt={file.name}/>            
+                    <span>
+                        <span className="px-2 font-weight-bold text-monospace">{file.file_name}</span>    
+                        <span className="badge badge-info">{getFileSize(file.file_size)}</span>                
+                    </span>
+                </div>
+                <span>
+                    {file.file_status==="uploading"?
+                        <div class="spinner-grow" role="status">
+                            <span class="sr-only">Loading...</span>
+                        </div>
+                    :
+                        <span className="text-success">
+                            <i className="fa fa-check-circle fa-lg"></i>
+                        </span>                        
+                    }
+                </span>
             </div>
-        }</>
+        )
+    }
+    const thumbs = files.map(file => {
+        return(
+            thumbFile(file)
+        )
+    });
+    return ( 
+        <div className="text-center">            
+            <div {...getRootProps({style:baseStyle})}>
+                <input {...getInputProps()} />                
+                    <div className="">
+                        <img src="https://res.cloudinary.com/code-gambit/image/upload/v1621421198/Web%20App/file_40x40_sea3kj.png"/>
+                        <br></br>
+                        <p>Drag and Drop your files here</p>
+                    </div>                 
+            </div>
+            <div>
+                {thumbs}
+            </div>
+        </div>
         
      );
 }
