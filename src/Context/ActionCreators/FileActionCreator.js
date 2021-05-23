@@ -23,10 +23,12 @@ export const fileStateUpdateCurrentPage=(pageNumber)=>({
     type:ActionTypes.FILE_STATE_UPDATE_CURRENT_PAGE,
     payload:pageNumber
 })
+
 export const fileStateAddLastEKMap=(payload)=>({
     type:ActionTypes.FILE_STATE_ADD_LASTEK_MAP,
     payload:{}
 })
+
 export const fileStateUpdateLastEKMap=(currentPage,lastEvaluatedKey)=>({
     type:ActionTypes.FILE_STATE_UPDATE_LASTEK_MAP,
     payload:{currentPage,lastEvaluatedKey}
@@ -36,22 +38,32 @@ export const addFile=(fileData,fileDispatch)=>{
     fileDispatch(fileStateUpdateFiles(fileData))
 }
 
-export const loadFiles = async (fileDispatch,currentPage,lastEvaluatedKey) => {
-    fileDispatch(fileStateLoading());
-    var userId = JSON.parse(localStorage.getItem("auth")).PK.substring(5);
+export const updateSearchParam = (searchParam)=>({
+    type:ActionTypes.FILE_STATE_UPDATE_SEARCH_PARAM,
+    payload:searchParam
+})
+
+export const loadFiles = async (fileDispatch,currentPage,lastEvaluatedKey,searchParam) => {
+    fileDispatch(fileStateLoading());    
+    const userId = JSON.parse(localStorage.getItem("auth")).PK.substring(5);
+    const queryParam={
+        LastEvaluatedKey:lastEvaluatedKey,        
+    }
+    if(searchParam){
+        queryParam.searchParam=searchParam;
+    }
     axios.get(
         `${process.env.REACT_APP_BACKENDURL}/user/${userId}/file`,
         {
-            params:{LastEvaluatedKey:lastEvaluatedKey},
+            params:queryParam,
             headers:{                                                
                 'X-Api-Key':process.env.REACT_APP_APIKEY,                                                
             }
         }       
-    ).then((response)=>{
+    ).then((response)=>{        
         fileDispatch(fileStateAddFiles(response.data.body.items))
         fileDispatch(fileStateUpdateLastEKMap(currentPage,response.data.body.LastEvaluatedKey))       
     }, (error) => {
         console.log(error);
     })    
-    
 }

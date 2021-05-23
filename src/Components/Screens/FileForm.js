@@ -35,7 +35,7 @@ const img = {
     width: '50px'
 };
 const FileForm = ({toggleFileFormModal,setCurrentPage}) => {
-    const {fileDispatch} = useContext(FileContext)
+    const {fileState, fileDispatch} = useContext(FileContext)
     const {authState} = useContext(AuthContext);
     const [files,setFiles] = useState([]);    
     const [isUploading,setIsUploading] = useState(false);
@@ -88,8 +88,8 @@ const FileForm = ({toggleFileFormModal,setCurrentPage}) => {
             AuthActionCreators.authStateUpdate(authState);
             localStorage.setItem("auth",JSON.stringify(authState.auth))             
             fileDispatch(FileActionCreators.fileStateUpdateCurrentPage(1));
-            fileDispatch(FileActionCreators.fileStateAddLastEKMap({}));
-            FileActionCreators.loadFiles(fileDispatch,1);      
+            fileDispatch(FileActionCreators.fileStateAddLastEKMap({}));            
+            FileActionCreators.loadFiles(fileDispatch,1,undefined,fileState.searchParam);      
             setCurrentPage(1);        
         }, (error) => {
             toast.error(error.message);            

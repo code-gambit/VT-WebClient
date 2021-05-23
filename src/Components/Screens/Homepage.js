@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import SearchBar from '../SearchBar';
+import URLSearchBar from '../URLSearchBar';
 import {CardDeck,Card, CardImg, CardText, CardBody,
     CardTitle,} from 'reactstrap';
 const Homepage = () => {
@@ -13,7 +13,7 @@ const Homepage = () => {
                     </div>                
                     <br/>
                     <div className="d-flex justify-content-center">
-                        <SearchBar/>
+                        <URLSearchBar/>
                     </div>
                 </div>
             </div>
