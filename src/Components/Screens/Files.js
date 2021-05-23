@@ -13,21 +13,41 @@ const Files = () => {
     const [isFileFormOpen,setIsFileFormOpen] = useState(false);
     const [currentPage, setCurrentPage] = useState(fileState.currentPage);
     const [lastEKMap, setLastEKMap] = useState(fileState.lastEKMap);
-    useEffect(()=>{
-        FileActionCreators.loadFiles(fileDispatch,fileState.currentPage,fileState.lastEKMap[currentPage-1]);        
-    },[])
+    const [searchParam,setSearchParam] = useState(fileState.searchParam);
+    
+    // useEffect(()=>{        
+    //     FileActionCreators.loadFiles(fileDispatch,fileState.currentPage,fileState.lastEKMap[currentPage-1],fileState.searchParam);                
+    // },[])
 
-    useEffect(() => {
+    useEffect(() => {        
         window.scrollTo({ behavior: 'smooth', top: '0px' });
         fileDispatch(FileActionCreators.fileStateUpdateCurrentPage(currentPage));
-        FileActionCreators.loadFiles(fileDispatch,currentPage,fileState.lastEKMap[currentPage-1]);        
+        FileActionCreators.loadFiles(fileDispatch,currentPage,fileState.lastEKMap[currentPage-1],fileState.searchParam);        
     }, [currentPage]);
 
-    useEffect(()=>{
-        setCurrentPage(fileState.currentPage);
-        setLastEKMap(fileState.lastEKMap);        
-    },fileState)
+    useEffect(() => {        
+        if(currentPage==1){
+            fileDispatch(FileActionCreators.fileStateUpdateCurrentPage(1));
+            FileActionCreators.loadFiles(fileDispatch,1,undefined,searchParam);
+        }
+        setCurrentPage(1)     
+        fileDispatch(FileActionCreators.updateSearchParam(searchParam));        
+        fileDispatch(FileActionCreators.fileStateAddLastEKMap({}));        
+    }, [searchParam])
+
+    // useEffect(()=>{
+    //     setSearchParam(fileState.searchParam);
+    //     setCurrentPage(fileState.currentPage);
+    //     setLastEKMap(fileState.lastEKMap);            
+    // },fileState)
     
+    const handleSearchFile = ()=>{
+        // setCurrentPage(1)
+        // fileDispatch(FileActionCreators.updateSearchParam(searchParam));
+        // fileDispatch(FileActionCreators.fileStateUpdateCurrentPage(1));
+        // fileDispatch(FileActionCreators.fileStateAddLastEKMap({}));
+        // FileActionCreators.loadFiles(fileDispatch,1,undefined,searchParam)
+    }
     const toggleFileFormModal = ()=>{
         setIsFileFormOpen(!isFileFormOpen)        
     }
@@ -43,8 +63,25 @@ const Files = () => {
         <div className="container">
             <h3 className="text-center">Your Files</h3>
             <div className="d-flex justify-content-between align-items-center">                
-                <Button onClick={toggleFileFormModal}>Upload File</Button>
-                <span>Showing Page: <span className="badge badge-dark">{fileState.currentPage}</span></span>
+                <Button onClick={toggleFileFormModal}>Upload File</Button>                                                                           
+                <div>
+                    <div className="search">
+                        <input type="text" className="searchTerm" placeholder={fileState.searchParam?fileState.searchParam:"Find File By Name"} onChange={(e)=>setSearchParam(e.target.value)}/>
+                        {fileState.searchParam?
+                            <button type="submit" className="searchButton" onClick={()=>{
+                                setSearchParam(undefined)
+                                // fileDispatch(FileActionCreators.updateSearchParam(undefined));
+                                // FileActionCreators.loadFiles(fileDispatch,1,undefined,undefined)
+                            }}>
+                                <i className="fa fa-times"></i>
+                            </button>
+                        :
+                            <button type="submit" className="searchButton" onClick={handleSearchFile}>
+                                <i className="fa fa-search"></i>
+                            </button>
+                        }                        
+                    </div>
+                </div>                
             </div>
             <Modal isOpen={isFileFormOpen} toggle={toggleFileFormModal} className="modal-dialog-centered">
                 {/* <ModalHeader toggle={toggleFileFormModal}>Upload your files</ModalHeader>                 */}
@@ -54,10 +91,9 @@ const Files = () => {
                 </ModalBody>
             </Modal>
             <div>
-                <>{!fileState.isLoading?
-                    
+                <>{!fileState.isLoading?                    
                     <div>
-                        {fileState.files.length==0?
+                        {!fileState.searchParam&&fileState.files.length==0?
                             <div className="text-center">
                                 <i class="fa fa-folder-open fa-lg"></i>
                                 <p>Upload Some Files</p>
@@ -77,27 +113,31 @@ const Files = () => {
                 }</>            
                 
             </div>
-            <div className="d-flex justify-content-center">                
-                <Pagination aria-label="File Pagination">
-                    <PaginationItem>
-                        <PaginationLink onClick={goToPreviousPage} disabled={fileState.lastEKMap[fileState.currentPage-1]?false:true}>
-                            prev
-                        </PaginationLink>
-                    </PaginationItem>                    
-                    {/* {getPaginationGroup().map((item, index) => (
+            <div className="text-center">
+                <div className="d-flex justify-content-center">                
+                    <Pagination aria-label="File Pagination">
                         <PaginationItem>
-                            <PaginationLink onClick={changePage}>
-                                {item}
+                            <PaginationLink onClick={goToPreviousPage} disabled={fileState.lastEKMap[fileState.currentPage-1]?false:true}>
+                                prev
                             </PaginationLink>
-                        </PaginationItem>
-                    ))}    */}
-                    <PaginationItem>
-                        <PaginationLink onClick={goToNextPage} disabled={fileState.lastEKMap[fileState.currentPage]?false:true}>
-                            next
-                        </PaginationLink>
-                    </PaginationItem>                               
-                </Pagination>
-            </div>
+                        </PaginationItem>                    
+                        {/* {getPaginationGroup().map((item, index) => (
+                            <PaginationItem>
+                                <PaginationLink onClick={changePage}>
+                                    {item}
+                                </PaginationLink>
+                            </PaginationItem>
+                        ))}    */}
+                        <PaginationItem>
+                            <PaginationLink onClick={goToNextPage} disabled={fileState.lastEKMap[fileState.currentPage]?false:true}>
+                                next
+                            </PaginationLink>
+                        </PaginationItem>                               
+                    </Pagination>
+                </div>
+                <span>Showing Page: <span className="badge badge-dark">{fileState.currentPage}</span></span>    
+            </div>    
+            
         </div>
 
      );

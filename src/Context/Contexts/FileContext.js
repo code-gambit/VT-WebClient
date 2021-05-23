@@ -7,6 +7,7 @@ const FileContextProvider = (props) => {
         isLoading:true,
         errMess:null,
         files:[],
+        searchParam:undefined,
         currentPage:1,
         lastEKMap:{}
     })

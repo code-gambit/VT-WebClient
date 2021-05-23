@@ -1,5 +1,5 @@
 import React from 'react';
-import SearchBar from '../SearchBar';
+import URLSearchBar from '../URLSearchBar';
 
 const Dashboard = () => {
     document.title=`${process.env.REACT_APP_TITLE}`
@@ -8,7 +8,7 @@ const Dashboard = () => {
             Dashboard
             <br/>
             <div className="d-flex justify-content-center">
-                <SearchBar/>
+                <URLSearchBar/>
             </div>
         </div>
      );

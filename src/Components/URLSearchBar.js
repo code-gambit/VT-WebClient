@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 
-const SearchBar = () => {
+const URLSearchBar = () => {
     const [URLLink,setURLLink] = useState();
     const URLLinkUtil=()=>{
         window.location=URLLink;
@@ -8,7 +8,12 @@ const SearchBar = () => {
     return ( 
         <div>
             <div className="search">
-                <input type="text" className="searchTerm" placeholder="Enter URL" onChange={(e)=>setURLLink(e.target.value)}/>
+                <input type="text" className="searchTerm" placeholder="Enter URL" onChange={(e)=>setURLLink(e.target.value)}
+                onKeyUp={(e)=>{
+                    if(e.keyCode===13){
+                        URLLinkUtil()
+                    }
+                }}/>
                 <button type="submit" className="searchButton" onClick={URLLinkUtil}>
                     <i className="fa fa-search"></i>
                 </button>                
@@ -17,4 +22,4 @@ const SearchBar = () => {
      );
 }
  
-export default SearchBar ;
+export default URLSearchBar ;
