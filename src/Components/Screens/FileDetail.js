@@ -3,7 +3,7 @@ import { Card, Button, CardTitle, CardText, Row, Col,
     Modal,ModalHeader, ModalBody, ModalFooter, Tooltip,
     Pagination, PaginationItem, PaginationLink} from 'reactstrap';
 import { useParams } from 'react-router';
-import axios from 'axios';
+import axios from '../../utils/axios';
 import { Loading } from '../Loading';
 import date from "date-and-time";
 import { useHistory} from 'react-router-dom';
@@ -34,7 +34,11 @@ const FileDetail = () => {
                     'x-api-key':process.env.REACT_APP_APIKEY,
                 }
             }
-        ).then((response)=>{            
+        ).then((response)=>{   
+            if(response.data.error || response.data.statusCode==500){
+                toast.error(response.data.error);
+                return;
+            }         
             setFileData(response.data.body.file_data);
             setURLData(response.data.body.url_data.items);
             updateLastEKMap(currentPage,response.data.body.url_data.LastEvaluatedKey);

@@ -23,7 +23,11 @@ const URL = ({url}) => {
                     'X-Api-Key':process.env.REACT_APP_APIKEY,                                                
                 }
             }
-        ).then((response)=>{                                       
+        ).then((response)=>{       
+            if(response.data.error || response.data.statusCode==500){
+                toast.error(response.data.error);
+                return;
+            }                                 
             toast.success(response.data.body);  
             setURLId(undefined);                  
             history.push(`/file/${fileId}`);            
@@ -42,7 +46,11 @@ const URL = ({url}) => {
                     'X-Api-Key':process.env.REACT_APP_APIKEY,                                                
                 }
             }
-        ).then((response)=>{                                       
+        ).then((response)=>{      
+            if(response.data.error || response.data.statusCode==500){
+                toast.error(response.data.error);
+                return;
+            }                                 
             toast.success("URL Update Success");  
             url.visible=!url.visible;   
             setURLId(undefined);

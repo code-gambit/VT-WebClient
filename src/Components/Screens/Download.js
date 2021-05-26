@@ -26,19 +26,18 @@ const Download = () => {
                     "X-Api-Key": process.env.REACT_APP_APIKEY,
                 },
             })
-            .then(
-                (response) => {
-                    if(response.data.statusCode==404){
-                        toast.error(response.data.body);
-                        history.push("/");
-                    }                    
-                    resolve(response.data.body);
-                },
-                (error) => {
-                    toast.error("Internal Server Error");
+            .then((response) => {                                   
+                if(response.data.statusCode==500||response.data.error){
+                    toast.error(response.data.error);
                     history.push("/");
-                    reject(error);
-                }
+                }                    
+                resolve(response.data.body);
+            },
+            (error) => {
+                toast.error("Internal Server Error");
+                history.push("/");
+                reject(error);
+            }
             );
         });
     }
