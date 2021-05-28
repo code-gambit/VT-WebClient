@@ -1,5 +1,7 @@
 import * as ActionTypes from '../ActionTypes';
-import axios from 'axios';
+//import axios from 'axios';
+import axios from '../../utils/axios'
+import { toast } from 'react-toastify';
 
 export const fileStateLoading=()=>({
     type:ActionTypes.FILE_STATE_LOADING
@@ -60,7 +62,11 @@ export const loadFiles = async (fileDispatch,currentPage,lastEvaluatedKey,search
                 'X-Api-Key':process.env.REACT_APP_APIKEY,                                                
             }
         }       
-    ).then((response)=>{        
+    ).then((response)=>{              
+        if(response.data.error){
+            toast.error(response.data.error);
+            return;
+        }          
         fileDispatch(fileStateAddFiles(response.data.body.items))
         fileDispatch(fileStateUpdateLastEKMap(currentPage,response.data.body.LastEvaluatedKey))       
     }, (error) => {

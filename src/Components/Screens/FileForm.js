@@ -4,7 +4,7 @@ import * as AuthActionCreators from '../../Context/ActionCreators/AuthActionCrea
 import { FileContext } from '../../Context/Contexts/FileContext';
 import { Button, Form, FormGroup, Label, Input, FormText } from 'reactstrap';
 import { AuthContext } from '../../Context/Contexts/AuthContext';
-import axios from 'axios';
+import axios from '../../utils/axios';
 import { toast } from 'react-toastify';
 import {useDropzone} from 'react-dropzone';
 import getFileSize from '../../utils/fileSize';
@@ -38,7 +38,6 @@ const FileForm = ({toggleFileFormModal,setCurrentPage}) => {
     const {fileState, fileDispatch} = useContext(FileContext)
     const {authState} = useContext(AuthContext);
     const [files,setFiles] = useState([]);    
-    const [isUploading,setIsUploading] = useState(false);
     useEffect(()=>{
         for(var i=0;i<files.length;i++){
             handleSubmit(files[i],i);
@@ -79,7 +78,10 @@ const FileForm = ({toggleFileFormModal,setCurrentPage}) => {
 
             }
         ).then((response)=>{                                    
-            //toast.success(`${file.file_name} upload success`);            
+            if(response.data.error || response.data.statusCode==500){
+                toast.error(response.data.error);
+                return;
+            }           
             const temp = files;
             temp[index].file_status = "uploaded"
             setFiles(temp);
@@ -112,7 +114,7 @@ const FileForm = ({toggleFileFormModal,setCurrentPage}) => {
         return(
             <div className="d-flex justify-content-between align-items-center">
                 <div className="p-1 d-flex flex-row align-items-center">
-                    <img src={file.preview} style={img} alt={file.name}/>            
+                    <img src={file.preview} style={img} alt="file"/>            
                     <span>
                         <span className="px-2 font-weight-bold text-monospace">{file.file_name}</span>    
                         <span className="badge badge-info">{getFileSize(file.file_size)}</span>                

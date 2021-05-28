@@ -44,9 +44,13 @@ const RenderFile = ({file}) => {
                     'X-Api-Key':process.env.REACT_APP_APIKEY,
                 }
             }
-        ).then((response)=>{                                    
+        ).then((response)=>{       
+            if(response.data.error || response.data.statusCode==500){
+                toast.error(response.data.error);
+                return;
+            }                             
             toast.success("URL Generated Successfully");   
-            setURLId(response.data.body);  
+            setURLId(response.data.body.GS1_PK);  
             toggleFileShareModal();    
             toggleURLLinkModal();   
         }, (error) => {
