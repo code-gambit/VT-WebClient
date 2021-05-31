@@ -33,7 +33,7 @@ const img = {
     height: '50px',
     width: '50px'
 };
-const FileForm = ({toggleFileFormModal,setCurrentPage}) => {
+const FileForm = ({setCurrentPage}) => {
     const {fileState, fileDispatch} = useContext(FileContext)
     const {authState} = useContext(AuthContext);
     const [files,setFiles] = useState([]);    
@@ -59,6 +59,12 @@ const FileForm = ({toggleFileFormModal,setCurrentPage}) => {
         }
         else if(files.length!=0){
             toast.success("All Files Uploaded");
+            fileDispatch(FileActionCreators.fileStateUpdateCurrentPage(1));
+            fileDispatch(FileActionCreators.fileStateAddLastEKMap({}));  
+            fileDispatch(FileActionCreators.updateEndDate(undefined));
+            fileDispatch(FileActionCreators.updateStartDate(undefined));
+            FileActionCreators.loadFiles(fileDispatch,1,undefined,fileState.searchParam);      
+            setCurrentPage(1);
         }
     }
     const handleSubmit = async (file,i,callback)=>{        
@@ -96,10 +102,7 @@ const FileForm = ({toggleFileFormModal,setCurrentPage}) => {
             authState.auth.storage_used=parseFloat(authState.auth.storage_used.toFixed(4))
             AuthActionCreators.authStateUpdate(authState);
             localStorage.setItem("auth",JSON.stringify(authState.auth))             
-            fileDispatch(FileActionCreators.fileStateUpdateCurrentPage(1));
-            fileDispatch(FileActionCreators.fileStateAddLastEKMap({}));            
-            FileActionCreators.loadFiles(fileDispatch,1,undefined,fileState.searchParam);      
-            setCurrentPage(1);
+            
             callback();        
         }, (error) => {
             toast.error(error.message);            

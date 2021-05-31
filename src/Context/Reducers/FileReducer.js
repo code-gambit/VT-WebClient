@@ -20,5 +20,9 @@ export const fileReducer = (state,action) =>{
             return {...state, isLoading:state.isLoading, errMess:null, files:state.files, currentPage:state.currentPage, lastEKMap:temp}
         case ActionTypes.FILE_STATE_UPDATE_SEARCH_PARAM:
             return {...state, isLoading:state.isLoading, errMess:null, files:state.files, currentPage:state.currentPage, lastEKMap:state.lastEKMap, searchParam:action.payload};
+        case ActionTypes.FILE_STATE_UPDATE_START_DATE :
+            return {...state, startDate:action.payload}
+        case ActionTypes.FILE_STATE_UPDATE_END_DATE :
+            return {...state, endDate:action.payload}
     }
 }
