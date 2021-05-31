@@ -9,7 +9,9 @@ const FileContextProvider = (props) => {
         files:[],
         searchParam:undefined,
         currentPage:1,
-        lastEKMap:{}
+        lastEKMap:{},
+        startDate: undefined,
+        endDate: undefined
     })
     return ( 
         <FileContext.Provider value={{fileState,fileDispatch}}>

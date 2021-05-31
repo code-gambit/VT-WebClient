@@ -7,49 +7,48 @@ import * as FileActionCreators from '../../Context/ActionCreators/FileActionCrea
 import FileForm from './FileForm';
 import RenderFile from './RenderFile';
 import { Loading } from '../Loading';
+import FileDateFilter from './FileDateFilter';
 
 const Files = () => {
     const {fileState,fileDispatch} = useContext(FileContext);
     const [isFileFormOpen,setIsFileFormOpen] = useState(false);
+    const [isFileDateFilterOpen, setIsFileDateFilterOpen] = useState(false);
     const [currentPage, setCurrentPage] = useState(fileState.currentPage);
     const [lastEKMap, setLastEKMap] = useState(fileState.lastEKMap);
     const [searchParam,setSearchParam] = useState(fileState.searchParam);
-    
-    // useEffect(()=>{        
-    //     FileActionCreators.loadFiles(fileDispatch,fileState.currentPage,fileState.lastEKMap[currentPage-1],fileState.searchParam);                
-    // },[])
 
     useEffect(() => {        
         window.scrollTo({ behavior: 'smooth', top: '0px' });
         fileDispatch(FileActionCreators.fileStateUpdateCurrentPage(currentPage));
-        FileActionCreators.loadFiles(fileDispatch,currentPage,fileState.lastEKMap[currentPage-1],fileState.searchParam);        
+        FileActionCreators.loadFiles(fileDispatch,currentPage,fileState.lastEKMap[currentPage-1],fileState.searchParam,fileState.startDate,fileState.endDate);
     }, [currentPage]);
 
-    useEffect(() => {        
+    useEffect(() => {  
         if(currentPage==1){
             fileDispatch(FileActionCreators.fileStateUpdateCurrentPage(1));
-            FileActionCreators.loadFiles(fileDispatch,1,undefined,searchParam);
+            FileActionCreators.loadFiles(fileDispatch,1,undefined,searchParam, fileState.startDate,fileState.endDate);
         }
         setCurrentPage(1)     
         fileDispatch(FileActionCreators.updateSearchParam(searchParam));        
         fileDispatch(FileActionCreators.fileStateAddLastEKMap({}));        
     }, [searchParam])
-
-    // useEffect(()=>{
-    //     setSearchParam(fileState.searchParam);
-    //     setCurrentPage(fileState.currentPage);
-    //     setLastEKMap(fileState.lastEKMap);            
-    // },fileState)
     
-    const handleSearchFile = ()=>{
-        // setCurrentPage(1)
-        // fileDispatch(FileActionCreators.updateSearchParam(searchParam));
-        // fileDispatch(FileActionCreators.fileStateUpdateCurrentPage(1));
-        // fileDispatch(FileActionCreators.fileStateAddLastEKMap({}));
-        // FileActionCreators.loadFiles(fileDispatch,1,undefined,searchParam)
+    const clearDateFilter = () =>{
+        if(currentPage==1){
+            fileDispatch(FileActionCreators.fileStateUpdateCurrentPage(1));
+            FileActionCreators.loadFiles(fileDispatch,1,undefined,searchParam, undefined, undefined);
+        }
+        setCurrentPage(1)     
+        fileDispatch(FileActionCreators.updateEndDate(undefined));
+        fileDispatch(FileActionCreators.updateStartDate(undefined));
+        fileDispatch(FileActionCreators.fileStateAddLastEKMap({}));
     }
+
     const toggleFileFormModal = ()=>{
         setIsFileFormOpen(!isFileFormOpen)        
+    }
+    const toggleFileDateFilterModal = () =>{
+        setIsFileDateFilterOpen(!isFileDateFilterOpen);
     }
     function goToNextPage(){        
         setCurrentPage(fileState.currentPage+1);                  
@@ -58,60 +57,131 @@ const Files = () => {
         setCurrentPage(fileState.currentPage-1);        
     }
 
-
-    return (
-        <div className="container">
-            <h3 className="text-center">Your Files</h3>
-            <div className="d-flex justify-content-between align-items-center">                
-                <Button onClick={toggleFileFormModal}>Upload File</Button>                                                                           
-                <div>
-                    <div className="search">
+    const renderFilters = () =>{
+        if(fileState.startDate&&fileState.endDate){
+            return(
+                <div className="align-items-center">
+                    <span className="badge badge-warning" type="button" onClick={clearDateFilter}>
+                        Clear Filter
+                        <i className="fa fa-times fa-sm"></i>
+                    </span>
+                </div>
+            )
+        }
+        else{
+            return(
+                <div className="d-flex justify-content-between align-items-center">
+                    {!fileState.searchParam?
+                        <div type="button" onClick={toggleFileDateFilterModal}>
+                            <i class="fa fa-calendar fa-lg"></i>
+                        </div>
+                    :
+                        ""
+                    }
+                    <div className="search px-2">
                         <input type="text" className="searchTerm" placeholder={fileState.searchParam?fileState.searchParam:"Find File By Name"} onChange={(e)=>setSearchParam(e.target.value)}/>
-                        {fileState.searchParam?
+                        {fileState.searchParam?                            
                             <button type="submit" className="searchButton" onClick={()=>{
                                 setSearchParam(undefined)
-                                // fileDispatch(FileActionCreators.updateSearchParam(undefined));
-                                // FileActionCreators.loadFiles(fileDispatch,1,undefined,undefined)
                             }}>
                                 <i className="fa fa-times"></i>
                             </button>
                         :
-                            <button type="submit" className="searchButton" onClick={handleSearchFile}>
-                                <i className="fa fa-search"></i>
-                            </button>
-                        }                        
+                            ""
+                        }
                     </div>
-                </div>                
+                </div> 
+            )   
+        }
+    }
+
+    const renderData = () =>{
+        const renderFiles = () =>{
+            return (
+                <div>
+                    {fileState.files.length==0?
+                        <div className="text-center" type="button" onClick={toggleFileFormModal}>
+                            <i class="fa fa-folder-open fa-lg"></i>
+                            <p>Upload Some Files</p>
+                        </div>
+                    :
+                        <Row>
+                            {fileState.files.map(file=>{
+                                return(
+                                    <RenderFile file={file} key={file.SK}/>
+                                )
+                            })}
+                        </Row>
+                    }   
+                </div>
+            )
+        }
+        if(fileState.isLoading){
+            return(
+                <Loading/>
+            )
+        }
+        else if(fileState.searchParam){
+            return(
+                <div>
+                    <div className="text-center">
+                        Showing Results for{" "}
+                        <span className="badge badge-secondary font-weight-bold">                            
+                            {fileState.searchParam}
+                        </span>
+                    </div>
+                    {renderFiles()}
+                </div>
+            )
+        }
+        else if(fileState.startDate&&fileState.endDate){
+            return(
+                <div>
+                    <div className="text-center">
+                        Showing Results for{" "}
+                        <span className="badge badge-secondary font-weight-bold">                            
+                        {fileState.startDate} - {fileState.endDate}
+                        </span>
+                    </div>
+                    {renderFiles()}
+                </div>
+            )
+        }
+        else{
+            return(
+                <div>
+                    {renderFiles()}
+                </div>
+            )
+        }
+    }
+    return (
+        <div className="container">
+            <h3 className="text-center">Your Files</h3>
+            <div className="d-flex justify-content-between align-items-center p-2">                
+                <div type="button" onClick={toggleFileFormModal}>
+                    <i class="fa fa-plus fa-lg"></i>
+                </div>  
+                <div>
+                    {renderFilters()}    
+                </div>                                                                                         
             </div>
             <Modal isOpen={isFileFormOpen} toggle={toggleFileFormModal} className="modal-dialog-centered">
                 {/* <ModalHeader toggle={toggleFileFormModal}>Upload your files</ModalHeader>                 */}
                 <ModalBody className="text-center modal-wrapper">
                     <h4 >Upload your files</h4>
-                    <FileForm toggleFileFormModal={toggleFileFormModal} setCurrentPage={setCurrentPage}/>
+                    <FileForm setCurrentPage={setCurrentPage}/>
                 </ModalBody>
             </Modal>
+            <Modal isOpen={isFileDateFilterOpen} toggle={toggleFileDateFilterModal}>
+                <ModalBody>
+                    <div className="text-center">
+                        <FileDateFilter toggle={toggleFileDateFilterModal}/>
+                    </div>
+                </ModalBody>
+            </Modal> 
             <div>
-                <>{!fileState.isLoading?                    
-                    <div>
-                        {!fileState.searchParam&&fileState.files.length==0?
-                            <div className="text-center">
-                                <i class="fa fa-folder-open fa-lg"></i>
-                                <p>Upload Some Files</p>
-                            </div>
-                        :
-                            <Row>
-                                {fileState.files.map(file=>{
-                                    return(
-                                        <RenderFile file={file} key={file.SK}/>
-                                    )
-                                })}
-                            </Row>
-                        }         
-                    </div>           
-                :
-                    <Loading/>
-                }</>            
-                
+                {renderData()}
             </div>
             <div className="text-center">
                 <div className="d-flex justify-content-center">                

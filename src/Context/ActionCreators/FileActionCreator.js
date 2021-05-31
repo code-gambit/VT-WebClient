@@ -45,14 +45,24 @@ export const updateSearchParam = (searchParam)=>({
     payload:searchParam
 })
 
-export const loadFiles = async (fileDispatch,currentPage,lastEvaluatedKey,searchParam) => {
-    fileDispatch(fileStateLoading());    
+export const updateStartDate = (startDate) => ({
+    type: ActionTypes.FILE_STATE_UPDATE_START_DATE,
+    payload: startDate
+})
+
+export const updateEndDate = (endDate) => ({
+    type: ActionTypes.FILE_STATE_UPDATE_END_DATE,
+    payload: endDate
+})
+
+export const loadFiles = async (fileDispatch,currentPage,lastEvaluatedKey,searchParam,start,end) => {
+    fileDispatch(fileStateLoading());   
     const userId = JSON.parse(localStorage.getItem("auth")).PK;
     const queryParam={
-        LastEvaluatedKey:lastEvaluatedKey,        
-    }
-    if(searchParam){
-        queryParam.searchParam=searchParam;
+        LastEvaluatedKey:lastEvaluatedKey,
+        searchParam:searchParam,
+        start:start,
+        end:end,        
     }
     axios.get(
         `${process.env.REACT_APP_BACKENDURL}/user/${userId}/file`,
@@ -65,6 +75,7 @@ export const loadFiles = async (fileDispatch,currentPage,lastEvaluatedKey,search
     ).then((response)=>{              
         if(response.data.error){
             toast.error(response.data.error);
+            fileDispatch(fileStateAddFiles([]));
             return;
         }          
         fileDispatch(fileStateAddFiles(response.data.body.items))

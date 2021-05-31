@@ -40,22 +40,22 @@ a{
   border: none;
   padding: 5px;
   height: 36px;
-  border-radius: 5px 0 0 5px;
+  border-radius: 5px;
   outline: none;
-  color: #9DBFAF;
+  color: var(--primary-bg);
 }
 .searchTerm:focus{
-  color: #00B4CC;
-  border: 1px solid #00B4CC;
-  border-right: none;
+  color: var(--primary-bg);
+  border: 1px solid var(--primary-bg);
+  border-radius: 5px 0 0 5px;
 }
 .searchButton {
   width: 40px;
   height: 36px;
-  border: 1px solid #00B4CC;
-  background: #00B4CC;
+  border: 1px solid var(--primary-bg);
+  background: var(--primary-bg);
   text-align: center;
-  color: #fff;
+  color: var(--primary-color);
   border-radius: 0 5px 5px 0;
   cursor: pointer;
   font-size: 20px;
