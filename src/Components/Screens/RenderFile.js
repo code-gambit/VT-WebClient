@@ -77,7 +77,7 @@ const RenderFile = ({file}) => {
         file_size= (file.size).toFixed(3)+" KB";
     }
     return(
-        <Col sm="6" className="p-2" key={file.SK}>
+        <Col sm="6" className="p-2">
             <Card body className="file-card-wrapper">
                 <div className="col-12">
                     <div className="float-left">

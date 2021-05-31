@@ -47,7 +47,7 @@ export const updateSearchParam = (searchParam)=>({
 
 export const loadFiles = async (fileDispatch,currentPage,lastEvaluatedKey,searchParam) => {
     fileDispatch(fileStateLoading());    
-    const userId = JSON.parse(localStorage.getItem("auth")).PK.substring(5);
+    const userId = JSON.parse(localStorage.getItem("auth")).PK;
     const queryParam={
         LastEvaluatedKey:lastEvaluatedKey,        
     }

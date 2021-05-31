@@ -2,7 +2,6 @@ import React, { useContext, useState, useEffect } from 'react';
 import * as FileActionCreators from '../../Context/ActionCreators/FileActionCreator';
 import * as AuthActionCreators from '../../Context/ActionCreators/AuthActionCreater';
 import { FileContext } from '../../Context/Contexts/FileContext';
-import { Button, Form, FormGroup, Label, Input, FormText } from 'reactstrap';
 import { AuthContext } from '../../Context/Contexts/AuthContext';
 import axios from '../../utils/axios';
 import { toast } from 'react-toastify';
@@ -39,9 +38,7 @@ const FileForm = ({toggleFileFormModal,setCurrentPage}) => {
     const {authState} = useContext(AuthContext);
     const [files,setFiles] = useState([]);    
     useEffect(()=>{
-        for(var i=0;i<files.length;i++){
-            handleSubmit(files[i],i);
-        }
+        series(files[0],0);
     },[files])
 
     async function getBuffer(file){
@@ -54,7 +51,17 @@ const FileForm = ({toggleFileFormModal,setCurrentPage}) => {
           }
         })
     }
-    const handleSubmit = async (file,i)=>{     
+    const series = (file,index) =>{
+        if(file){
+            handleSubmit(file,index,()=>{
+                series(files[index+1],index+1);
+            });
+        }
+        else if(files.length!=0){
+            toast.success("All Files Uploaded");
+        }
+    }
+    const handleSubmit = async (file,i,callback)=>{        
         const index=i
         if(file==undefined){
             toast.warning("Please select a file");
@@ -68,7 +75,7 @@ const FileForm = ({toggleFileFormModal,setCurrentPage}) => {
             size:parseFloat(file.file_size.toFixed(3)),
             LS1_SK: file.file_name
         }
-        const userId = JSON.parse(localStorage.getItem("auth")).PK.substring(5);
+        const userId = JSON.parse(localStorage.getItem("auth")).PK;
         axios.post(
             `${process.env.REACT_APP_BACKENDURL}/user/${userId}/file`, fileData,
             {
@@ -92,7 +99,8 @@ const FileForm = ({toggleFileFormModal,setCurrentPage}) => {
             fileDispatch(FileActionCreators.fileStateUpdateCurrentPage(1));
             fileDispatch(FileActionCreators.fileStateAddLastEKMap({}));            
             FileActionCreators.loadFiles(fileDispatch,1,undefined,fileState.searchParam);      
-            setCurrentPage(1);        
+            setCurrentPage(1);
+            callback();        
         }, (error) => {
             toast.error(error.message);            
         })
