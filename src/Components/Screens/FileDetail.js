@@ -26,7 +26,7 @@ const FileDetail = () => {
     const {fileDispatch} = useContext(FileContext);
 
     useEffect(() =>{
-        var userId = JSON.parse(localStorage.getItem("auth")).PK.substring(5);
+        const userId = JSON.parse(localStorage.getItem("auth")).PK;
         axios.get(
             `${process.env.REACT_APP_BACKENDURL}/user/${userId}/file/${fileId}`,
             {

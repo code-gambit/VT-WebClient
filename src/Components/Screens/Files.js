@@ -102,7 +102,7 @@ const Files = () => {
                             <Row>
                                 {fileState.files.map(file=>{
                                     return(
-                                        <RenderFile file={file}/>
+                                        <RenderFile file={file} key={file.SK}/>
                                     )
                                 })}
                             </Row>
