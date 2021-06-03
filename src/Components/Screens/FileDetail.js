@@ -58,6 +58,10 @@ const FileDetail = () => {
                 }
             }
         ).then((response)=>{
+            if(response.data.error){
+                toast.error(response.data.error);
+                return;
+            }
             setURLData(response.data.body.items);
             updateLastEKMap(currentPage,response.data.body.LastEvaluatedKey);            
         }, (error) => {
@@ -86,7 +90,7 @@ const FileDetail = () => {
         setIsFileDeleteTipOpen(!isFileDeleteTipOpen);
     }
     const fileDeleteUtil = () =>{        
-        var userId = JSON.parse(localStorage.getItem("auth")).PK.substring(5);
+        var userId = JSON.parse(localStorage.getItem("auth")).PK;
         setFileData(undefined);
         axios.delete(
             `${process.env.REACT_APP_BACKENDURL}/user/${userId}/file/${fileId}`,
@@ -96,7 +100,11 @@ const FileDetail = () => {
                 }
             } 
         ).then((response)=>{                           
-            FileActionCreators.loadFiles(fileDispatch); 
+            FileActionCreators.loadFiles(fileDispatch,1,undefined,undefined,undefined); 
+            if(response.data.error){
+                toast.error(response.data.error);
+                return;
+            }
             toast.success(response.data.body)                      
             history.push('/files')            
         }, (error) => {

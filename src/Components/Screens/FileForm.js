@@ -37,10 +37,44 @@ const FileForm = ({setCurrentPage}) => {
     const {fileState, fileDispatch} = useContext(FileContext)
     const {authState} = useContext(AuthContext);
     const [files,setFiles] = useState([]);    
+    const [isDragActive, setIsDragActive] = useState(true);
     useEffect(()=>{
         series(files[0],0);
     },[files])
-
+    const setStatus = (index, status, URL=undefined) =>{
+        const temp = files;
+        temp[index].file_status = status;
+        if(URL){
+            temp[index].default = process.env.REACT_APP_FRONTENDURL+"/"+URL;
+        }
+        setFiles(temp);
+    }
+    const renderStatus = (status, URL) =>{
+        if(status=="uploaded"){
+            return(
+                <>
+                <span className="fa fa-clipboard mx-2" role="button" onClick={() => {navigator.clipboard.writeText(URL)}}></span>                          
+                <span className="text-success">
+                    <i className="fa fa-check-circle fa-lg"></i>
+                </span>
+                </>
+            )
+        }
+        else if(status=="uploading"){
+            return(
+                <div class="spinner-grow" role="status">
+                    <span class="sr-only">Loading...</span>
+                </div>
+            )
+        }
+        else if(status=="error"){
+            return(
+                <span className="text-danger">
+                    <i class="fa fa-exclamation-circle fa-lg"></i>
+                </span>
+            )
+        }
+    }
     async function getBuffer(file){
         const reader=new window.FileReader();
         return new Promise((resolve,reject)=>{
@@ -53,60 +87,70 @@ const FileForm = ({setCurrentPage}) => {
     }
     const series = (file,index) =>{
         if(file){
+            setIsDragActive(false);
             handleSubmit(file,index,()=>{
                 series(files[index+1],index+1);
             });
         }
         else if(files.length!=0){
-            toast.success("All Files Uploaded");
+            var isAllErrorFree = true;
+            for(var i = 0; i<files.length; i++){
+                if(files[i].file_status=="error"){
+                    isAllErrorFree = false;
+                    break;
+                }
+            }
+            if(isAllErrorFree){
+                if(files.length==1){
+                    toast.success("All File Uploaded");
+                }
+                else{
+                    toast.success("All Files Uploaded");
+                }
+            }
             fileDispatch(FileActionCreators.fileStateUpdateCurrentPage(1));
             fileDispatch(FileActionCreators.fileStateAddLastEKMap({}));  
             fileDispatch(FileActionCreators.updateEndDate(undefined));
             fileDispatch(FileActionCreators.updateStartDate(undefined));
             FileActionCreators.loadFiles(fileDispatch,1,undefined,fileState.searchParam);      
             setCurrentPage(1);
+            setIsDragActive(true);
         }
     }
     const handleSubmit = async (file,i,callback)=>{        
         const index=i
-        if(file==undefined){
-            toast.warning("Please select a file");
-            return;
-        }
-        const buffer= await getBuffer(file) 
-        const res=await client.add(buffer)
-        var fileData={
-            f_type:file.file_type,
-            hash:res.path,
-            size:parseFloat(file.file_size.toFixed(3)),
-            LS1_SK: file.file_name
-        }
-        const userId = JSON.parse(localStorage.getItem("auth")).PK;
-        axios.post(
-            `${process.env.REACT_APP_BACKENDURL}/user/${userId}/file`, fileData,
-            {
-                headers:{
-                    'X-Api-Key':process.env.REACT_APP_APIKEY,
-                },
-
+        
+        try{
+            if(file==undefined){
+                throw new Error("Invalid File")
             }
-        ).then((response)=>{                                    
-            if(response.data.error || response.data.statusCode==500){
-                toast.error(response.data.error);
-                return;
-            }           
-            const temp = files;
-            temp[index].file_status = "uploaded"
-            setFiles(temp);
+            const buffer= await getBuffer(file) 
+            const res=await client.add(buffer)
+            var fileData={
+                f_type:file.file_type,
+                hash:res.path,
+                size:parseFloat(file.file_size.toFixed(3)),
+                LS1_SK: file.file_name
+            }
+            const userId = JSON.parse(localStorage.getItem("auth")).PK;
+            const response  = await axios.post(`${process.env.REACT_APP_BACKENDURL}/user/${userId}/file`, fileData,{
+                headers:{
+                        'X-Api-Key':process.env.REACT_APP_APIKEY,
+                }});
+            if(response.data.error){
+                throw new Error(response.data.error);
+            }
+            setStatus(index, "uploaded", response.data.body.default);
             authState.auth.storage_used+=fileData.size
             authState.auth.storage_used=parseFloat(authState.auth.storage_used.toFixed(4))
             AuthActionCreators.authStateUpdate(authState);
-            localStorage.setItem("auth",JSON.stringify(authState.auth))             
-            
-            callback();        
-        }, (error) => {
-            toast.error(error.message);            
-        })
+            localStorage.setItem("auth",JSON.stringify(authState.auth));
+            callback();
+        } catch(err){
+            toast.error(err.message);
+            setStatus(index, "error");
+            callback();
+        }
     }
 
 
@@ -132,15 +176,7 @@ const FileForm = ({setCurrentPage}) => {
                     </span>
                 </div>
                 <span>
-                    {file.file_status==="uploading"?
-                        <div class="spinner-grow" role="status">
-                            <span class="sr-only">Loading...</span>
-                        </div>
-                    :
-                        <span className="text-success">
-                            <i className="fa fa-check-circle fa-lg"></i>
-                        </span>                        
-                    }
+                    {renderStatus(file.file_status, file.default)}
                 </span>
             </div>
         )
@@ -151,16 +187,21 @@ const FileForm = ({setCurrentPage}) => {
         )
     });
     return ( 
-        <div className="text-center">            
-            <div {...getRootProps({style:baseStyle})}>
-                <input {...getInputProps()} />                
+        <div className="text-center">   
+            {isDragActive?         
+                <div {...getRootProps({style:baseStyle})}>
+                    <input {...getInputProps()} />                
                     <div className="">
                         <img src="https://res.cloudinary.com/code-gambit/image/upload/v1621421198/Web%20App/file_40x40_sea3kj.png"/>
                         <br></br>
                         <p>Drag and Drop your files here</p>
-                    </div>                 
-            </div>
+                    </div>
+                </div>
+            :
+                ""
+            }  
             <div>
+                
                 {thumbs}
             </div>
         </div>

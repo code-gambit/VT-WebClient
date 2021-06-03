@@ -169,7 +169,6 @@ const Files = () => {
             <Modal isOpen={isFileFormOpen} toggle={toggleFileFormModal} className="modal-dialog-centered">
                 {/* <ModalHeader toggle={toggleFileFormModal}>Upload your files</ModalHeader>                 */}
                 <ModalBody className="text-center modal-wrapper">
-                    <h4 >Upload your files</h4>
                     <FileForm setCurrentPage={setCurrentPage}/>
                 </ModalBody>
             </Modal>
