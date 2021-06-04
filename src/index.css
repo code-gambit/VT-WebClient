@@ -11,6 +11,11 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+:root{
+  --primary-bg: #212529;
+  --primary-color:  #ffffff
+}
+/******************************Universal CSS****************************/
 a{
   text-decoration: none;
   color: inherit;
@@ -18,9 +23,8 @@ a{
 .routing-wrapper{
   margin-bottom: 80px;
 }
-:root{
-  --primary-bg: #212529;
-  --primary-color:  #ffffff
+.modal-wrapper{
+  border-radius: 20px;
 }
 .navbar-wrapper{
   background:var(--primary-bg);
@@ -30,6 +34,9 @@ a{
   background:var(--primary-bg);
   color: var(--primary-color);
 }
+
+/************************* CSS For Search bar ************************/
+
 .search {
   width: 100%;
   position: relative;
@@ -60,6 +67,7 @@ a{
   cursor: pointer;
   font-size: 20px;
 }
+/*********************************HomePage CSS*************************************/
 .top-wrapper{
   background: linear-gradient(to right, #e55d87, #5fc3e4);
   background-image: url("https://res.cloudinary.com/code-gambit/image/upload/v1621277824/Web%20App/top-wrapper_o7mevz.png");
@@ -80,7 +88,8 @@ a{
   transform: scale(1.05);
   box-shadow: 0 10px 20px rgba(0,0,0,.12), 0 4px 8px rgba(0,0,0,.06);
 }
-.file-card-wrapper{
+/*****************************File Card CSS*********************/
+.file-card-wrapper, .file-detail-card-wrapper{
   background-color: #000000;
   background-image: linear-gradient(315deg, #000000 0%, #414141 74%);
   border-radius: 10px;
@@ -90,21 +99,23 @@ a{
   transform: scale(1.05);
   box-shadow: 0 10px 20px rgba(0,0,0,.12), 0 4px 8px rgba(0,0,0,.06);
 }
+/******************************URL Card CSS**********************/
 .url-card-wrapper{
   background-color: #c0c0c0;
   border-radius: 10px;
 }
-.modal-wrapper{
-  /* box-shadow: rgb(209 209 213) 0px 5px 15px; */
-  border-radius: 20px;
+.url-card-wrapper:hover{
+  transform: scale(1.05);
+  box-shadow: 0 10px 20px rgba(0,0,0,.12), 0 4px 8px rgba(0,0,0,.06);
 }
+
 @media screen and (max-width: 680px) {
   .top-wrapper h1{
     font-size: 25px;
     max-width: 80%;
   }
 }
-
+/***************************FileForm CSS************************/
 @keyframes gradient {
 	0% {
 		background-position: 0% 50%;

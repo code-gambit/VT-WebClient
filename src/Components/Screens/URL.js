@@ -28,7 +28,7 @@ const URL = ({url}) => {
                 toast.error(response.data.error);
                 return;
             }                                 
-            toast.success(response.data.body);  
+            toast.success("URL delete success");  
             setURLId(undefined);                  
             history.push(`/file/${fileId}`);            
         }, (error) => {

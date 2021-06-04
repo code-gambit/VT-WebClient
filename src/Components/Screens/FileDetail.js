@@ -10,7 +10,6 @@ import { useHistory} from 'react-router-dom';
 import { FileContext } from '../../Context/Contexts/FileContext';
 import * as FileActionCreators from '../../Context/ActionCreators/FileActionCreator';
 import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import URL from './URL';
 import getFileSize from '../../utils/fileSize';
 
@@ -120,7 +119,7 @@ const FileDetail = () => {
         now=date.format(now, 'ddd, MMM DD, YYYY H:mm');
         return(
             <Col sm="12" className="p-2">
-                <Card body className="file-card-wrapper">
+                <Card body className="file-detail-card-wrapper">
                     <div className="col-12">
                         <div className="float-left">
                             <CardTitle tag="h5">{file.LS1_SK}</CardTitle>
