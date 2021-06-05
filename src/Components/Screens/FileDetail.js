@@ -21,6 +21,11 @@ const FileDetail = () => {
     const [isFileDeleteTipOpen,setIsFileDeleteTipOpen] = useState(false);    
     const [currentPage,setCurrentPage] = useState(1);
     const [lastEKMap,setLastEKMap] = useState({0:undefined});
+    const [isFileShareTipOpen, setIsFileShareTipOpen] = useState(false);
+    const [isFileShareModalOpen,setIsFileShareModalOpen] = useState(false);
+    const [isURLLinkModalOpen, setIsURLLinkModalOpen] = useState(false);
+    const [URLVisibility,setURLVisibility] = useState(true);
+    const [URLId,setURLId] = useState("");
     const history=useHistory()
     const {fileDispatch} = useContext(FileContext);
 
@@ -88,6 +93,18 @@ const FileDetail = () => {
     const toggleFileDeleteTip = () =>{
         setIsFileDeleteTipOpen(!isFileDeleteTipOpen);
     }
+    const toggleFileShareTip = () =>{
+        setIsFileShareTipOpen(!isFileShareTipOpen);
+    }
+    const toggleFileShareModal = () =>{
+        setIsFileShareModalOpen(!isFileShareModalOpen);
+    }
+    const toggleURLLinkModal = () =>{
+        if(isURLLinkModalOpen==true){
+            window.location.reload();
+        }
+        setIsURLLinkModalOpen(!isURLLinkModalOpen);
+    }
     const fileDeleteUtil = () =>{        
         var userId = JSON.parse(localStorage.getItem("auth")).PK;
         setFileData(undefined);
@@ -112,7 +129,33 @@ const FileDetail = () => {
         }) 
         toggleFileDeleteModal();        
     }
-
+    const shareFileUtil = ()=>{
+        var URLData={
+            hash:fileData.hash,
+            visible:URLVisibility,
+            clicks_left:50
+        }
+        axios.post(
+            `${process.env.REACT_APP_BACKENDURL}/file/${fileId}/url`,URLData,
+            {
+                headers:{
+                    'X-Api-Key':process.env.REACT_APP_APIKEY,
+                }
+            }
+        ).then((response)=>{       
+            if(response.data.error || response.data.statusCode==500){
+                toast.error(response.data.error);
+                return;
+            }                             
+            toast.success("URL Generated Successfully");   
+            setURLId(response.data.body.GS1_PK);  
+            toggleFileShareModal();    
+            toggleURLLinkModal();
+        }, (error) => {
+            toast.error("Some error occured");
+        })
+        setURLVisibility(true);
+    }
     function renderFile(file){
         var fileId=file.SK.slice(5);
         var now=date.parse(fileId,'YYYY-MM-DD-hh-mm-ss');
@@ -129,12 +172,16 @@ const FileDetail = () => {
                             <span className="badge badge-warning">{getFileSize(file.size)}</span>                            
                         </div>
                     </div>
-                    <div className="col-12">
-                        <div className="float-left">
+                    <div>
+                        <div className="float-left col-12 col-sm-8">
                             <CardText>Created at: {now}</CardText>
                         </div>
-                        <div className="float-right">
-                            <span className="fa fa-trash mx-1" role="button" onClick={(e)=>{toggleFileDeleteModal()}} id="FileDelete"></span>
+                        <div className="float-right col-12 col-sm-2 text-center">
+                            <span role="button" className="px-2 fa fa-share-alt" onClick={toggleFileShareModal} id="ShareFile"></span>     
+                            <Tooltip placement="right" isOpen={isFileShareTipOpen} target="ShareFile" toggle={toggleFileShareTip}>
+                                Share File
+                            </Tooltip> 
+                            <span className="px-2 fa fa-trash mx-1" role="button" onClick={(e)=>{toggleFileDeleteModal()}} id="FileDelete"></span>
                             <Tooltip placement="right" isOpen={isFileDeleteTipOpen} target="FileDelete" toggle={toggleFileDeleteTip}>
                                 Delete File
                             </Tooltip>
@@ -147,18 +194,7 @@ const FileDetail = () => {
 
     return (
         <div className="container">                         
-            <Modal isOpen={isFileDeleteModalOpen} toggle={toggleFileDeleteModal} className="modal-dialog-centered">
-                <ModalHeader toggle={toggleFileDeleteModal}>Warning!</ModalHeader>
-                <ModalBody>
-                    Do want to delete the File?
-                    <br/>
-                    Note: It will also delete all URLs corresponding to the file.
-                </ModalBody>
-                <ModalFooter>
-                    <Button className="secondary" onClick={toggleFileDeleteModal}>Close</Button>
-                    <Button className="primary" onClick={fileDeleteUtil}>Delete</Button>
-                </ModalFooter>
-            </Modal>            
+                      
             <>{fileData!=undefined && fileData!=undefined?
                 <div>                    
                     {renderFile(fileData)}
@@ -190,6 +226,46 @@ const FileDetail = () => {
                     :
                     <h4 className="text-center">No URL available</h4>
                     }</>
+                    <Modal isOpen={isFileDeleteModalOpen} toggle={toggleFileDeleteModal} className="modal-dialog-centered">
+                        <ModalHeader toggle={toggleFileDeleteModal}>Warning!</ModalHeader>
+                        <ModalBody>
+                            Do want to delete the File?
+                            <br/>
+                            Note: It will also delete all URLs corresponding to the file.
+                        </ModalBody>
+                        <ModalFooter>
+                            <Button className="secondary" onClick={toggleFileDeleteModal}>Close</Button>
+                            <Button className="primary" onClick={fileDeleteUtil}>Delete</Button>
+                        </ModalFooter>
+                    </Modal>  
+                    <Modal isOpen={isFileShareModalOpen} toggle={toggleFileShareModal} className="modal-dialog-centered">
+                        <ModalHeader toggle={toggleFileShareModal}>Share File {fileData.LS1_SK}</ModalHeader>
+                        <ModalBody>
+                            URL Visibility                        
+                            <form>                            
+                                <label>
+                                    <input type="radio" checked={!URLVisibility} onClick={()=>setURLVisibility(false)} />
+                                    Private 
+                                </label>                            
+                                <label className="ml-2">
+                                    <input type="radio" checked={URLVisibility} onClick={()=>setURLVisibility(true)}/>
+                                    Public
+                                </label>                            
+                            </form>
+                        </ModalBody>
+                        <ModalFooter>
+                            <Button onClick={shareFileUtil}>
+                                Create Link
+                            </Button>
+                        </ModalFooter>
+                    </Modal>
+                    <Modal isOpen={isURLLinkModalOpen} toggle={toggleURLLinkModal} className="modal-dialog-centered">
+                        <ModalHeader toggle={toggleURLLinkModal}>Copy URL</ModalHeader>
+                        <ModalBody>  
+                        <a href={process.env.REACT_APP_FRONTENDURL+"/"+URLId}>{process.env.REACT_APP_FRONTENDURL+"/"+URLId}</a>
+                        <span className="fa fa-clipboard mx-2" role="button" onClick={() => {navigator.clipboard.writeText(process.env.REACT_APP_FRONTENDURL+"/"+URLId)}}></span>                          
+                        </ModalBody>                    
+                    </Modal>
                 </div>
             :   
                 <Loading/>             

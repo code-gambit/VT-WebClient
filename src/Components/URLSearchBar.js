@@ -1,9 +1,12 @@
 import React, {useState} from 'react';
-
+import {toast} from 'react-toastify'
 const URLSearchBar = () => {
     const [URLLink,setURLLink] = useState();
     const URLLinkUtil=()=>{
-        window.location=URLLink;
+        if(URLLink) window.location=URLLink;
+        else{
+            toast.warning("URL can be empty")
+        }
     }
     return ( 
         <div>
