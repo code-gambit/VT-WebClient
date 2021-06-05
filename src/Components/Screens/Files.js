@@ -173,6 +173,7 @@ const Files = () => {
                 </ModalBody>
             </Modal>
             <Modal isOpen={isFileDateFilterOpen} toggle={toggleFileDateFilterModal}>
+                <ModalHeader>Filter By Date</ModalHeader>
                 <ModalBody>
                     <div className="text-center">
                         <FileDateFilter toggle={toggleFileDateFilterModal}/>
