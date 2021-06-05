@@ -160,7 +160,7 @@ const FileForm = ({setCurrentPage}) => {
                 preview: URL.createObjectURL(file),
                 file_type: getFileType(file.name),
                 file_name: file.name.split('.')[0],
-                file_size: file.size/1000,
+                file_size: file.size,
                 file_status: "uploading"
             })));
         }

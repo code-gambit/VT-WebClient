@@ -71,9 +71,11 @@ const URL = ({url}) => {
                 <Col sm="6" className="p-2" key={url.SK}>
                     <Card body className="url-card-wrapper">
                         <div className="col-12">
-                            <div className="float-left">
-                                <CardTitle tag="h5">
-                                    <a href={process.env.REACT_APP_FRONTENDURL+"/"+url.GS1_PK}>{process.env.REACT_APP_FRONTENDURL+"/"+url.GS1_PK}</a>
+                            <div className="float-left w-100">
+                                <CardTitle tag="h5" className="d-flex justify-content-between">
+                                    <div className="w-100">
+                                        <a href={process.env.REACT_APP_FRONTENDURL+"/"+url.GS1_PK} className="d-inline-block text-truncate mw-100">{process.env.REACT_APP_FRONTENDURL+"/"+url.GS1_PK}</a>
+                                    </div>
                                     <span className="fa fa-clipboard mx-2" role="button" onClick={() => {navigator.clipboard.writeText(process.env.REACT_APP_FRONTENDURL+"/"+url.GS1_PK)}}></span>    
                                 </CardTitle>
                             </div>
