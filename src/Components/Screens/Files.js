@@ -182,31 +182,35 @@ const Files = () => {
             <div>
                 {renderData()}
             </div>
-            <div className="text-center">
-                <div className="d-flex justify-content-center">                
-                    <Pagination aria-label="File Pagination">
-                        <PaginationItem>
-                            <PaginationLink onClick={goToPreviousPage} disabled={fileState.lastEKMap[fileState.currentPage-1]?false:true}>
-                                prev
-                            </PaginationLink>
-                        </PaginationItem>                    
-                        {/* {getPaginationGroup().map((item, index) => (
+
+            {!(fileState.isLoading||fileState.files.length==0)?
+                <div className="text-center">
+                    <div className="d-flex justify-content-center">                
+                        <Pagination aria-label="File Pagination">
                             <PaginationItem>
-                                <PaginationLink onClick={changePage}>
-                                    {item}
+                                <PaginationLink onClick={goToPreviousPage} disabled={fileState.lastEKMap[fileState.currentPage-1]?false:true}>
+                                    prev
                                 </PaginationLink>
-                            </PaginationItem>
-                        ))}    */}
-                        <PaginationItem>
-                            <PaginationLink onClick={goToNextPage} disabled={fileState.lastEKMap[fileState.currentPage]?false:true}>
-                                next
-                            </PaginationLink>
-                        </PaginationItem>                               
-                    </Pagination>
+                            </PaginationItem>                    
+                            {/* {getPaginationGroup().map((item, index) => (
+                                <PaginationItem>
+                                    <PaginationLink onClick={changePage}>
+                                        {item}
+                                    </PaginationLink>
+                                </PaginationItem>
+                            ))}    */}
+                            <PaginationItem>
+                                <PaginationLink onClick={goToNextPage} disabled={fileState.lastEKMap[fileState.currentPage]?false:true}>
+                                    next
+                                </PaginationLink>
+                            </PaginationItem>                               
+                        </Pagination>
+                    </div>
+                    <span>Showing Page: <span className="badge badge-dark">{fileState.currentPage}</span></span>    
                 </div>
-                <span>Showing Page: <span className="badge badge-dark">{fileState.currentPage}</span></span>    
-            </div>    
-            
+            :
+                null
+            }
         </div>
 
      );
