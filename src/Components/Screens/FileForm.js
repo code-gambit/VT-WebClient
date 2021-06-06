@@ -209,4 +209,4 @@ const FileForm = ({setCurrentPage}) => {
      );
 }
  
-export default FileForm;
+export default React.memo(FileForm);
