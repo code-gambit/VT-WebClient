@@ -108,5 +108,5 @@ const URL = ({url}) => {
         
      );
 }
- 
-export default URL;
+
+export default React.memo(URL);

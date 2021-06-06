@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState, useMemo } from 'react';
 import { Button, Row,
     Modal,ModalHeader, ModalBody, 
     Pagination, PaginationItem, PaginationLink } from 'reactstrap';
@@ -15,24 +15,25 @@ const Files = () => {
     const [isFileDateFilterOpen, setIsFileDateFilterOpen] = useState(false);
     const [currentPage, setCurrentPage] = useState(fileState.currentPage);
     const [lastEKMap, setLastEKMap] = useState(fileState.lastEKMap);
-    const [searchParam,setSearchParam] = useState(fileState.searchParam);
+    const [searchParam,setSearchParam] = useState(undefined);
 
     useEffect(() => {        
         window.scrollTo({ behavior: 'smooth', top: '0px' });
         fileDispatch(FileActionCreators.fileStateUpdateCurrentPage(currentPage));
         FileActionCreators.loadFiles(fileDispatch,currentPage,fileState.lastEKMap[currentPage-1],fileState.searchParam,fileState.startDate,fileState.endDate);
     }, [currentPage]);
-
-    useEffect(() => {  
+    
+    const handleSearchParamFilter = (searchParam) =>{
         if(currentPage==1){
-            fileDispatch(FileActionCreators.fileStateUpdateCurrentPage(1));
             FileActionCreators.loadFiles(fileDispatch,1,undefined,searchParam, fileState.startDate,fileState.endDate);
         }
-        setCurrentPage(1)     
+        else{
+            setCurrentPage(1)
+        }
         fileDispatch(FileActionCreators.updateSearchParam(searchParam));        
-        fileDispatch(FileActionCreators.fileStateAddLastEKMap({}));        
-    }, [searchParam])
-    
+        fileDispatch(FileActionCreators.fileStateAddLastEKMap({}));
+    }
+
     const clearDateFilter = () =>{
         if(currentPage==1){
             fileDispatch(FileActionCreators.fileStateUpdateCurrentPage(1));
@@ -50,7 +51,7 @@ const Files = () => {
     const toggleFileDateFilterModal = () =>{
         setIsFileDateFilterOpen(!isFileDateFilterOpen);
     }
-    function goToNextPage(){        
+    function goToNextPage(){
         setCurrentPage(fileState.currentPage+1);                  
     }
     function goToPreviousPage(){
@@ -72,24 +73,31 @@ const Files = () => {
             return(
                 <div className="d-flex justify-content-between align-items-center">
                     {!fileState.searchParam?
+                        <>
                         <div type="button" onClick={toggleFileDateFilterModal}>
                             <i class="fa fa-calendar fa-lg"></i>
-                        </div>
-                    :
-                        ""
-                    }
-                    <div className="search px-2">
-                        <input type="text" className="searchTerm" placeholder={fileState.searchParam?fileState.searchParam:"Find File By Name"} onChange={(e)=>setSearchParam(e.target.value)}/>
-                        {fileState.searchParam?                            
+                        </div>            
+                        <div className="search px-2">
+                            <input type="text" className="searchTerm" placeholder="Find File By Name" onChange={(e)=>setSearchParam(e.target.value)}/>
                             <button type="submit" className="searchButton" onClick={()=>{
-                                setSearchParam(undefined)
+                                handleSearchParamFilter(searchParam)
+                            }}>
+                                <i className="fa fa-search"></i>
+                            </button>
+                        </div>
+                        </>
+                    :
+                        <div className="search px-2">
+                            <input type="text" className="searchTerm" placeholder={searchParam?searchParam:"Find File By Name"} onChange={(e)=>setSearchParam(e.target.value)} readOnly/>
+                            <button type="submit" className="searchButton" onClick={()=>{
+                                setSearchParam(undefined);
+                                handleSearchParamFilter(undefined);
                             }}>
                                 <i className="fa fa-times"></i>
                             </button>
-                        :
-                            ""
-                        }
-                    </div>
+                        </div>
+                    }
+                    
                 </div> 
             )   
         }
@@ -192,14 +200,7 @@ const Files = () => {
                                 <PaginationLink onClick={goToPreviousPage} disabled={fileState.lastEKMap[fileState.currentPage-1]?false:true}>
                                     prev
                                 </PaginationLink>
-                            </PaginationItem>                    
-                            {/* {getPaginationGroup().map((item, index) => (
-                                <PaginationItem>
-                                    <PaginationLink onClick={changePage}>
-                                        {item}
-                                    </PaginationLink>
-                                </PaginationItem>
-                            ))}    */}
+                            </PaginationItem>
                             <PaginationItem>
                                 <PaginationLink onClick={goToNextPage} disabled={fileState.lastEKMap[fileState.currentPage]?false:true}>
                                     next
@@ -216,5 +217,5 @@ const Files = () => {
 
      );
 }
-
-export default Files;
+Files.whyDidYouRender = true
+export default React.memo(Files);

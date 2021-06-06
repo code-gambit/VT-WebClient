@@ -11,8 +11,6 @@ const crypto = require('crypto');
 
 const RenderFile = ({file}) => {
     const [isFileViewMoreTipOpen,setIsFileViewMoreTipOpen] = useState(false);
-   
-
     const code = (string) =>{        
         return crypto.createHash('sha1').update(string).digest('hex');
     }
@@ -44,5 +42,4 @@ const RenderFile = ({file}) => {
         </Col>
     )
 }
- 
-export default RenderFile;
+export default React.memo(RenderFile);

@@ -173,4 +173,4 @@ function FileDateFilter({toggle}) {
         </div>
     )
 }
-export default FileDateFilter;
+export default React.memo(FileDateFilter);

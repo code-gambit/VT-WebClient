@@ -44,7 +44,7 @@ const FileDetail = () => {
                 return;
             }         
             setFileData(response.data.body.file_data);
-            setURLData(response.data.body.url_data.items);
+            //setURLData(response.data.body.url_data.items);
             updateLastEKMap(currentPage,response.data.body.url_data.LastEvaluatedKey);
         }, (error) => {
             console.log(error);
@@ -273,5 +273,5 @@ const FileDetail = () => {
         </div>
      );
 }
-
+FileDetail.whyDidYouRender = true;
 export default FileDetail;
