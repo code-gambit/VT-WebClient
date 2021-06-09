@@ -159,7 +159,7 @@ const FileForm = ({setCurrentPage}) => {
             setFiles(acceptedFiles.map(file => Object.assign(file, {
                 preview: URL.createObjectURL(file),
                 file_type: getFileType(file.name),
-                file_name: file.name.split('.')[0],
+                file_name: file.name,
                 file_size: file.size,
                 file_status: "uploading"
             })));

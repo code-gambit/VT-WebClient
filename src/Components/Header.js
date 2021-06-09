@@ -44,9 +44,6 @@ const Header = () => {
                         <Collapse isOpen={isNavOpen} navbar onClick={toggleNav}>
                                 <Nav className="ml-auto" navbar>
                                     <NavItem>
-                                        <NavLink className="nav-link" to='/dashboard'><span className="fa fa-file fa-lg"></span> Dashboard</NavLink>
-                                    </NavItem>
-                                    <NavItem>
                                         <NavLink className="nav-link" to='/files'><span className="fa fa-file fa-lg"></span> Files</NavLink>
                                     </NavItem>
                                     <NavItem>
