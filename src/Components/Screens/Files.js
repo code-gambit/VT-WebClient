@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useState, useMemo } from 'react';
-import { Button, Row,
-    Modal,ModalHeader, ModalBody, 
+import { Row, Modal, ModalHeader, ModalBody, 
     Pagination, PaginationItem, PaginationLink } from 'reactstrap';
 import { FileContext } from '../../Context/Contexts/FileContext';
 import * as FileActionCreators from '../../Context/ActionCreators/FileActionCreator';
@@ -113,7 +112,7 @@ const Files = () => {
                             <p>Upload Some Files</p>
                         </div>
                     :
-                        <Row>
+                        <Row className="px-5">
                             {fileState.files.map(file=>{
                                 return(
                                     <RenderFile file={file} key={file.SK}/>
@@ -165,7 +164,7 @@ const Files = () => {
     }
     return (
         <div className="container">
-            <h3 className="text-center">Your Files</h3>
+            <h3 className="text-center pt-2">YOUR FILES</h3>
             <div className="d-flex justify-content-between align-items-center p-2">                
                 <div type="button" onClick={toggleFileFormModal}>
                     <i class="fa fa-plus fa-lg"></i>
@@ -198,12 +197,12 @@ const Files = () => {
                         <Pagination aria-label="File Pagination">
                             <PaginationItem>
                                 <PaginationLink onClick={goToPreviousPage} disabled={fileState.lastEKMap[fileState.currentPage-1]?false:true}>
-                                    prev
+                                    <i class="fa fa-arrow-left"></i>
                                 </PaginationLink>
                             </PaginationItem>
                             <PaginationItem>
                                 <PaginationLink onClick={goToNextPage} disabled={fileState.lastEKMap[fileState.currentPage]?false:true}>
-                                    next
+                                    <i class="fa fa-arrow-right"></i>
                                 </PaginationLink>
                             </PaginationItem>                               
                         </Pagination>

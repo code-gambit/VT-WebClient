@@ -34,14 +34,14 @@ const Routing = () => {
       <Suspense fallback={<Loading/>}>
         {authState.auth.PK ? (
           <Switch>
-            <Route exact path="/dashboard" component={Dashboard} />
+            <Route exact path="/" component={HomePage} />
             <Route exact path="/files" component={Files} />
             <Route exact path="/file/:fileId" component={FileDetail} />
             <Route exact path="/profile" component={Profile} />
             <Route exact path="/about" component={About} />
             <Route exact path="/:urlId" component={Download}/>
             <Route>
-              <Redirect to="/dashboard" /> <Dashboard />
+              <Redirect to="/" /> <HomePage />
             </Route>
           </Switch>
         ) : (

@@ -5,7 +5,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: #f2f2f2;
+  background: #f5f9fc;
 }
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
@@ -89,16 +89,34 @@ a{
   box-shadow: 0 10px 20px rgba(0,0,0,.12), 0 4px 8px rgba(0,0,0,.06);
 }
 /*****************************File Card CSS*********************/
-.file-card-wrapper, .file-detail-card-wrapper{
+.file-detail-card-wrapper{
   background-color: #000000;
   background-image: linear-gradient(315deg, #000000 0%, #414141 74%);
   border-radius: 10px;
   color: var(--primary-color);
 }
-.file-card-wrapper:hover{
+.file-card-wrapper {
+  background-color: white;
+  font-family: Arial, Helvetica, sans-serif;
+  border-radius: 10px;
+}
+/* .file-card-wrapper:hover{
   transform: scale(1.05);
   box-shadow: 0 10px 20px rgba(0,0,0,.12), 0 4px 8px rgba(0,0,0,.06);
+} */
+.file_title {
+  font-weight: 600;
 }
+.file_size_wrapper {
+  font-size: small;
+}
+.file_size_label {
+  font-weight: 600;
+}
+.file_size {
+  color: #737373;
+}
+
 /******************************URL Card CSS**********************/
 .url-card-wrapper{
   background-color: #c0c0c0;

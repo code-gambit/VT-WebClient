@@ -124,7 +124,7 @@ const Footer = () => {
   };
   return (
     <div className="footer-wrapper fixed-bottom">
-      <Modal isOpen={mainModal} toggle={toggleMain}>
+      <Modal isOpen={mainModal} toggle={toggleMain} className="modal-dialog-centered">
         <ModalBody>
           <Nav tabs>
             <NavItem>
