@@ -2,8 +2,8 @@ import React, { useState, useCallback } from 'react';
 import { Card,UncontrolledDropdown, DropdownMenu, 
     DropdownItem, DropdownToggle, Col} from 'reactstrap';
 import {Link} from 'react-router-dom';
-import date from "date-and-time";
 import getFileSize from '../../utils/fileSize';
+import getDate from '../../utils/getDate';
 import getFileIconURL from '../../utils/fileIcon';
 import FileDelete from '../FileDelete';
 import FileShare from '../FileShare';
@@ -17,9 +17,8 @@ const RenderFile = ({file}) => {
     const toggleToShare = useCallback(() =>{
         setToShare(!toShare);
     },[toShare]);
-    var fileId=file.SK.substring(5)
-    var now=date.parse(fileId,'YYYY-MM-DD-hh-mm-ss');
-    now=date.format(now, 'ddd, MMM DD, YYYY H:mm');
+    var fileId=file.SK.substring(5);
+    var now = getDate(fileId);
     var file_size = getFileSize(file.size);
     var file_icon_url = getFileIconURL(file.LS1_SK);
     return(
@@ -28,9 +27,9 @@ const RenderFile = ({file}) => {
                 <div className="card-body">
                     <UncontrolledDropdown className="float-right">
                         <DropdownToggle nav>
-                            <i class="fa fa-ellipsis-v"></i>
+                            <i className="fa fa-ellipsis-v"></i>
                         </DropdownToggle>
-                        <DropdownMenu down>  
+                        <DropdownMenu>  
                             <DropdownItem onClick={()=>toggleToShare()}>
                                 Share
                             </DropdownItem>
@@ -44,6 +43,11 @@ const RenderFile = ({file}) => {
                             <img src={file_icon_url}/>
                             <p className="pt-3 file_title">{file.LS1_SK}</p>
                         </Link>
+                        {window.location.pathname==`/file/${fileId}`?
+                            <span>{now}</span>
+                        :   
+                            null
+                        }
                     </div>
                     <hr/>
                     <div className="file_size_wrapper">
