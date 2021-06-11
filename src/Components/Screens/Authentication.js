@@ -1,49 +1,42 @@
 import React, { useState } from "react";
-import { Button } from "reactstrap";
-import SignUp from "./SignUp";
-import SignIn from "./SignIn";
+import SignUp from "../Auth/SignUp";
+import SignIn from "../Auth/SignIn";
+import Amplify from "aws-amplify";
+import { Auth } from "aws-amplify";
+import awsExports from "../../aws-exports";
+import ForgotPassword from "../Auth/ForgotPassword";
+Amplify.configure(awsExports);
 
 const Authenticate = () => {
   const [logIn, toggleLogIn] = useState(true);
+  const [renderForgot, setRenderForgot] = useState(false);
 
   return (
-    <div className="container">
-      {console.log({ logIn })}
-      {logIn ? (
+    <>
+      {renderForgot ? (
         <div className="container">
-          <h1 style={{ "text-align": "center", "margin-bottom": "20px" }}>
-            Sign In
-          </h1>
-          <SignIn />
-          <Button
-            style={{ margin: "auto", width: "25%" }}
-            size="sm"
-            block
-            color="primary"
-            onClick={() => toggleLogIn(false)}
-          >
-            Sign Up
-          </Button>
+          <ForgotPassword
+            login={() => {
+              toggleLogIn(true);
+              setRenderForgot(false);
+            }}
+          />
         </div>
-      ) : (
+      ) : null}
+      {logIn && !renderForgot ? (
+        <>
+          <SignIn
+            signup={() => toggleLogIn(!logIn)}
+            toggleForgot={() => setRenderForgot(true)}
+          />
+        </>
+      ) : null}
+      {!logIn && !renderForgot ? (
         <div className="container">
-          <h1 style={{ "text-align": "center", margin: "10px 0px 20px 0px" }}>
-            Sign Up
-          </h1>
-          <SignUp />
-          <Button
-            style={{ margin: "auto", width: "25%" }}
-            size="sm"
-            block
-            color="primary"
-            onClick={() => toggleLogIn(true)}
-          >
-            {" "}
-            Log In{" "}
-          </Button>
+          <SignUp login={() => toggleLogIn(!logIn)} />
         </div>
-      )}
-    </div>
+      ) : null}
+    </>
   );
 };
 export default Authenticate;
