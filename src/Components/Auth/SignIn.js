@@ -5,15 +5,33 @@ import awsExports from "../../aws-exports";
 import { withAuthenticator } from "@aws-amplify/ui-react";
 import { AuthContext } from "../../Context/Contexts/AuthContext";
 import * as AuthActionCreators from "../../Context/ActionCreators/AuthActionCreater";
-import {Button,Form,FormGroup,Label,Input,FormText,Toast,ToastBody,ToastHeader} from "reactstrap";
+import { Link } from "react-router-dom";
+import {
+  Button,
+  Form,
+  FormGroup,
+  Label,
+  Input,
+  FormText,
+  Toast,
+  ToastBody,
+  ToastHeader,
+  Modal,
+  ModalBody,
+  ModalHeader,
+  Spinner,
+} from "reactstrap";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { useHistory } from "react-router-dom";
 Amplify.configure(awsExports);
 
-export const SignIn = () => {
+export const SignIn = (props) => {
   const { authState, authDispatch } = useContext(AuthContext);
   const [errors, setError] = useState({});
+  const [visibility, setVisibility] = useState(false);
+  const [loggingIn, toggleLoggingIn] = useState(false);
+  const toggle = () => toggleLoggingIn(!loggingIn);
   const [values, setValues] = useState({
     email: "",
     password: "",
@@ -29,18 +47,27 @@ export const SignIn = () => {
 
   function valid() {
     let errors = {};
+    let isValid = true;
     if (!values.email) {
       errors.email = "email is required";
+      isValid = false;
     }
     if (!values.password) {
       errors.password = "Password is required";
+      isValid = false;
     }
     setError(errors);
+    return isValid;
   }
+
   async function handleSubmit(e) {
     e.preventDefault();
     const email = e.target[0].value;
     const password = e.target[1].value;
+    if (!valid()) {
+      toggle();
+      return;
+    }
     try {
       const result = await Auth.signIn(email, password);
       var user = {
@@ -72,21 +99,30 @@ export const SignIn = () => {
       console.log("error signing in", error);
       toast.error(error.message);
     }
+    toggle();
   }
   return (
     <>
       <div
-        className="container"
-        style={{ margin: "auto", display: "flex", "justify-content": "center" }}
+        className="d-flex-inline"
+        style={{
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%,-50%)",
+        }}
       >
+        <h1 style={{ "text-align": "center", "margin-bottom": "20px" }}>
+          Sign In
+        </h1>
         <Form onSubmit={handleSubmit}>
           <FormGroup>
             <Label for="userPassword">Email</Label>
             <Input
-              type="email"
+              type="text"
               name="email"
               id="userEmail"
-              placeholder="username"
+              placeholder="user email"
               value={values.email}
               onChange={(e) => {
                 handleChange(e);
@@ -98,34 +134,61 @@ export const SignIn = () => {
           </FormGroup>
           <FormGroup>
             <Label for="userPassword">Password</Label>
-            <Input
-              type="password"
-              name="password"
-              id="userPassword"
-              value={values.password}
-              placeholder="password"
-              onChange={(e) => {
-                handleChange(e);
-              }}
-              onBlur={() => {
-                valid();
-              }}
-            />
+            <div class="d-flex bd-highlight align-items-center text-center">
+              <Input
+                type={visibility ? "text" : "password"}
+                name="password"
+                id="userPassword"
+                value={values.password}
+                placeholder="password"
+                onChange={(e) => {
+                  handleChange(e);
+                }}
+              />
+              <span
+                onClick={() => {
+                  setVisibility(!visibility);
+                }}
+                class={
+                  visibility
+                    ? "fa fa-fw fa-eye-slash field_icon toggle-password m-n4"
+                    : "fa fa-fw fa-eye field_icon toggle-password m-n4"
+                }
+              ></span>
+            </div>
             {errors.password && (
               <p style={{ "text-align": "left" }}>{errors.password}</p>
             )}
+            <a href="#" onClick={() => props.toggleForgot()}>
+              Forgot password?
+            </a>
           </FormGroup>
+
           <Button
-            classname="row"
             color="primary"
             style={{ "margin-bottom": "10px" }}
             size="sm"
             block
             type="submit"
-            disabled={JSON.stringify(errors) === "{}" ? false : true}
-            color={JSON.stringify(errors) === "{}" ? "success" : "danger"}
+            onClick={() => {
+              toggle();
+            }}
+            color="success"
           >
-            Log In
+            {loggingIn ? (
+              <Spinner class="align-right" size="sm" color="light" />
+            ) : (
+              "Log In"
+            )}
+          </Button>
+          <Button
+            style={{ margin: "auto" }}
+            size="sm"
+            block
+            color="primary"
+            onClick={() => props.signup()}
+          >
+            Sign Up
           </Button>
         </Form>
       </div>
