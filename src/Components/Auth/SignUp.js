@@ -1,23 +1,10 @@
 import React, { useState, useContext, useEffect } from "react";
-import Amplify from "aws-amplify";
-import { Auth } from "aws-amplify";
+import Amplify, { Auth } from "aws-amplify";
 import awsExports from "../../aws-exports";
-import { withAuthenticator } from "@aws-amplify/ui-react";
 import axios from "axios";
 import { AuthContext } from "../../Context/Contexts/AuthContext";
 import * as AuthActionCreators from "../../Context/ActionCreators/AuthActionCreater";
-import {
-  Button,
-  Form,
-  FormGroup,
-  Label,
-  Input,
-  FormText,
-  Toast,
-  ToastBody,
-  ToastHeader,
-  Spinner,
-} from "reactstrap";
+import {Button,Form,FormGroup,Label,Input,Spinner} from "reactstrap";
 import { toast } from "react-toastify";
 import { useHistory } from "react-router-dom";
 Amplify.configure(awsExports);

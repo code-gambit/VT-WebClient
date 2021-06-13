@@ -1,26 +1,11 @@
 import React, { useState, useContext, useEffect } from "react";
-import Amplify from "aws-amplify";
-import { Auth } from "aws-amplify";
+import Amplify, { Auth } from "aws-amplify";
 import awsExports from "../../aws-exports";
 import { withAuthenticator } from "@aws-amplify/ui-react";
 import { AuthContext } from "../../Context/Contexts/AuthContext";
 import * as AuthActionCreators from "../../Context/ActionCreators/AuthActionCreater";
 import { Link } from "react-router-dom";
-import {
-  Button,
-  Form,
-  FormGroup,
-  Label,
-  Input,
-  FormText,
-  Toast,
-  ToastBody,
-  ToastHeader,
-  Modal,
-  ModalBody,
-  ModalHeader,
-  Spinner,
-} from "reactstrap";
+import {Button,Form,FormGroup,Label,Input,Modal,ModalBody,ModalHeader,Spinner} from "reactstrap";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { useHistory } from "react-router-dom";
@@ -93,6 +78,7 @@ export const SignIn = (props) => {
         });
       localStorage.setItem("auth", JSON.stringify(user));
       await authDispatch(AuthActionCreators.authStateUpdate(user));
+      console.log(authState.auth.PK);
       history.push("/dashboard");
       toast.success("successfully logged in");
     } catch (error) {
@@ -192,14 +178,6 @@ export const SignIn = (props) => {
           </Button>
         </Form>
       </div>
-      {errors.code && (
-        <div className="p-3 bg-danger my-2 rounded">
-          <Toast>
-            <ToastHeader>{errors.code}</ToastHeader>
-            <ToastBody>{errors.message}</ToastBody>
-          </Toast>
-        </div>
-      )}
     </>
   );
 };
