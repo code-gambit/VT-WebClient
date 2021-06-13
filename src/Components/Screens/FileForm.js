@@ -102,10 +102,10 @@ const FileForm = ({setCurrentPage}) => {
             }
             if(isAllErrorFree){
                 if(files.length==1){
-                    toast.success("All File Uploaded");
+                    toast.success("File Uploaded Successfully");
                 }
                 else{
-                    toast.success("All Files Uploaded");
+                    toast.success("Files Uploaded Successfully");
                 }
             }
             fileDispatch(FileActionCreators.fileStateUpdateCurrentPage(1));

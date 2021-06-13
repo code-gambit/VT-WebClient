@@ -14,7 +14,7 @@ const FileShare = ({isOpen, fileId, fileHash, toggleToShare}) => {
     const toggleURLLinkModal = () =>{
         if(isURLLinkModalOpen==true){
             toggleToShare();
-            if(!window.location.pathname=="/files"){
+            if(window.location.pathname==`/file/${fileId}`){
                 window.location.reload();
             }
         }
