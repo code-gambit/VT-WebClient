@@ -1,21 +1,7 @@
 import React, { useState } from "react";
 import { Auth } from "aws-amplify";
 import { useHistory, Redirect } from "react-router-dom";
-import {
-  Button,
-  Form,
-  FormGroup,
-  Label,
-  Input,
-  FormText,
-  Toast,
-  ToastBody,
-  ToastHeader,
-  Modal,
-  ModalBody,
-  ModalHeader,
-  Spinner,
-} from "reactstrap";
+import {Button,Form,FormGroup,Label,Input,FormText,Toast,ToastBody,ToastHeader,Modal,ModalBody,ModalHeader,Spinner} from "reactstrap";
 import { toast } from "react-toastify";
 import awsExports from "../../aws-exports";
 
