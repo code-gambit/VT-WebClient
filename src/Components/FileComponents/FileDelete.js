@@ -1,11 +1,11 @@
 import React, { useState, useContext } from 'react';
 import { Button, Modal, ModalHeader, ModalBody, 
     ModalFooter,} from 'reactstrap';
-import axios from '../utils/axios';
+import axios from '../../utils/axios';
 import { useHistory} from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { FileContext } from '../Context/Contexts/FileContext';
-import * as FileActionCreators from '../Context/ActionCreators/FileActionCreator';
+import { FileContext } from '../../Context/Contexts/FileContext';
+import * as FileActionCreators from '../../Context/ActionCreators/FileActionCreator';
 const FileDelete = ({isOpen, fileId, toggleToDelete}) => {
     const [isFileDeleteModalOpen,setIsFileDeleteModalOpen] = useState(isOpen);
     const history=useHistory();

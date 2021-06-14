@@ -1,10 +1,9 @@
 import React, { useState } from "react";
-import SignUp from "../Auth/SignUp";
-import SignIn from "../Auth/SignIn";
+import SignUp from "../AuthComponents/SignUp";
+import SignIn from "../AuthComponents/SignIn";
 import Amplify from "aws-amplify";
-import { Auth } from "aws-amplify";
 import awsExports from "../../aws-exports";
-import ForgotPassword from "../Auth/ForgotPassword";
+import ForgotPassword from "../AuthComponents/ForgotPassword";
 Amplify.configure(awsExports);
 
 const Authenticate = () => {

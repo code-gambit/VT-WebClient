@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import { Button, Modal, ModalHeader, ModalBody, 
-    ModalFooter,} from 'reactstrap';
-import axios from '../utils/axios';
+    ModalFooter, UncontrolledTooltip} from 'reactstrap';
+import axios from '../../utils/axios';
 import { toast } from 'react-toastify';
 const FileShare = ({isOpen, fileId, fileHash, toggleToShare}) => {
     const [isFileShareModalOpen,setIsFileShareModalOpen] = useState(isOpen);
     const [isURLLinkModalOpen, setIsURLLinkModalOpen] = useState(false);
     const [URLVisibility,setURLVisibility] = useState(true);
     const [URLId,setURLId] = useState(undefined);
+    const [isURLCopied, setIsURLCopied] = useState(false);
     const toggleFileShareModal = () =>{
         setIsFileShareModalOpen(!isFileShareModalOpen);
     }
@@ -73,8 +74,20 @@ const FileShare = ({isOpen, fileId, fileHash, toggleToShare}) => {
             <Modal isOpen={isURLLinkModalOpen} toggle={toggleURLLinkModal} className="modal-dialog-centered">
                 <ModalHeader toggle={toggleURLLinkModal}>Copy URL</ModalHeader>
                 <ModalBody>  
-                <a href={process.env.REACT_APP_FRONTENDURL+"/"+URLId}>{process.env.REACT_APP_FRONTENDURL+"/"+URLId}</a>
-                <span className="fa fa-clipboard mx-2" role="button" onClick={() => {navigator.clipboard.writeText(process.env.REACT_APP_FRONTENDURL+"/"+URLId)}}></span>                          
+                <a href={process.env.REACT_APP_FRONTENDURL+"/"+URLId} className="pr-2">{process.env.REACT_APP_FRONTENDURL+"/"+URLId}</a>
+                {!isURLCopied?
+                    <>
+                    <span className="fa fa-clipboard mx-2" role="button" onClick={() => {
+                        navigator.clipboard.writeText(process.env.REACT_APP_FRONTENDURL+"/"+URLId);
+                        setIsURLCopied(true);
+                    }} id={"copyURL"}></span>    
+                    <UncontrolledTooltip placement="left" target={"copyURL"}>
+                        Copy URL
+                    </UncontrolledTooltip>
+                    </>
+                :
+                    <i class="fa fa-check-circle text-success"></i> 
+                }
                 </ModalBody>                    
             </Modal>
         </div>

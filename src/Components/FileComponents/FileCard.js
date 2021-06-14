@@ -5,8 +5,8 @@ import {Link} from 'react-router-dom';
 import getFileSize from '../../utils/fileSize';
 import getDate from '../../utils/getDate';
 import getFileIconURL from '../../utils/fileIcon';
-import FileDelete from '../FileDelete';
-import FileShare from '../FileShare';
+import FileDelete from './FileDelete';
+import FileShare from './FileShare';
 
 const RenderFile = ({file}) => {
     const [toDelete, setToDelete] = useState(false);

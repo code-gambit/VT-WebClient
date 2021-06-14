@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Row, Pagination, PaginationItem, PaginationLink} from 'reactstrap';
 import { useParams } from 'react-router';
 import axios from '../../utils/axios';
 import { Loading } from '../Loading';
 import { toast } from 'react-toastify';
-import URL from './URL';
-import RenderFile from './RenderFile';
+import URL from '../FileComponents/URLCard';
+import RenderFile from '../FileComponents/FileCard';
 
 const FileDetail = () => {
     const [fileId,setFileId] = useState(useParams().fileId);
