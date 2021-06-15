@@ -1,14 +1,14 @@
-import React, { useContext, useEffect, useState, useMemo } from 'react';
+import React, { useContext, useEffect, useState} from 'react';
 import { Row, Modal, ModalHeader, ModalBody, 
     Pagination, PaginationItem, PaginationLink } from 'reactstrap';
 import { FileContext } from '../../Context/Contexts/FileContext';
 import * as FileActionCreators from '../../Context/ActionCreators/FileActionCreator';
-import FileForm from './FileForm';
-import RenderFile from './RenderFile';
+import FileForm from '../FileComponents/FileForm';
+import RenderFile from '../FileComponents/FileCard';
 import { Loading } from '../Loading';
-import FileDateFilter from './FileDateFilter';
+import FileDateFilter from '../FileComponents/FileDateFilter';
 
-const Files = () => {
+const FileList = () => {
     const {fileState,fileDispatch} = useContext(FileContext);
     const [isFileFormOpen,setIsFileFormOpen] = useState(false);
     const [isFileDateFilterOpen, setIsFileDateFilterOpen] = useState(false);
@@ -216,5 +216,5 @@ const Files = () => {
 
      );
 }
-Files.whyDidYouRender = true
-export default React.memo(Files);
+FileList.whyDidYouRender = true
+export default React.memo(FileList);

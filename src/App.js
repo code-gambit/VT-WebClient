@@ -10,7 +10,6 @@ import FileContextProvider from './Context/Contexts/FileContext';
 
 require('dotenv').config()
 
-
 function App() {
   return (
     <div className="App">

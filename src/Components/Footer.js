@@ -2,12 +2,10 @@ import React, { useState, useContext } from "react";
 import { useHistory } from "react-router-dom";
 import { AuthContext } from "../Context/Contexts/AuthContext";
 import * as AuthActionCreators from "../Context/ActionCreators/AuthActionCreater";
-import ChangeName from "./Auth/ChangeName";
-import ChangePassword from "./Auth/ChangePassword";
+import ChangeName from "./AuthComponents/ChangeName";
+import ChangePassword from "./AuthComponents/ChangePassword";
 import classnames from "classnames";
 import {Modal,ModalBody,TabContent,TabPane,Nav,NavItem,NavLink,UncontrolledTooltip} from "reactstrap";
-import { toast } from "react-toastify";
-
 const Footer = () => {
   const [mainModal, setMainModal] = useState(false);
   const toggleMain = () => {

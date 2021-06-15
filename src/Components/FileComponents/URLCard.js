@@ -1,16 +1,18 @@
 import React, { useState } from 'react';
 import { Button, Col, Modal, ModalHeader, 
-    ModalBody, ModalFooter} from 'reactstrap';
+    ModalBody, ModalFooter, UncontrolledTooltip} from 'reactstrap';
 import { useParams } from 'react-router';
 import axios from 'axios';
 import { useHistory} from 'react-router-dom';
 import date from "date-and-time";
 import { toast } from 'react-toastify';
+const crypto = require('crypto');
 
 const URL = ({url,defaultURLId}) => {    
     const [fileId,setFileId] = useState(useParams().fileId);
     const [URLId, setURLId] = useState(url.SK.slice(4));
     const [isURLDeleteModalOpen,setIsURLDeleteModalOpen] = useState(false);
+    const [isURLCopied, setIsURLCopied] = useState(false);
     const history=useHistory()
     const toggleURLDeleteModal = () =>{
         setIsURLDeleteModalOpen(!isURLDeleteModalOpen);
@@ -65,8 +67,12 @@ const URL = ({url,defaultURLId}) => {
         var now=date.parse(urlId,'YYYY-MM-DD-hh-mm-ss');
         now=date.format(now, 'ddd, MMM DD, YYYY H:mm');
         return now;
-    }    
-    return (   
+    }
+    const code = (string) =>{        
+        return crypto.createHash('sha1').update(string).digest('hex');
+    }
+    var idTemp="id"+code(url.SK.substring(5));
+    return (
         <>{URLId?
             <Col className="py-1" key={url.SK}>
                 <div body className="card url-card-wrapper">
@@ -79,7 +85,21 @@ const URL = ({url,defaultURLId}) => {
                                     {process.env.REACT_APP_FRONTENDURL+"/"+url.GS1_PK}
                                 </a>
                             </div>
-                            <span className="fa fa-clipboard mx-2" role="button" onClick={() => {navigator.clipboard.writeText(process.env.REACT_APP_FRONTENDURL+"/"+url.GS1_PK)}}></span>    
+                            {!isURLCopied?
+                                <>
+                                <span className="fa fa-clipboard mx-2" role="button" onClick={() => {
+                                    navigator.clipboard.writeText(process.env.REACT_APP_FRONTENDURL+"/"+url.GS1_PK);
+                                    setIsURLCopied(true);
+                                }} id={"copyURL"+idTemp}></span>        
+                                <UncontrolledTooltip placement="left" target={"copyURL"+idTemp}>
+                                    Copy URL
+                                </UncontrolledTooltip>
+                                </>
+                            :
+                                <i class="fa fa-check-circle text-success"></i> 
+                            }
+                            
+                            
                         </div>
                         {defaultURLId==url.GS1_PK?
                             <span class="badge badge-info">Default</span>
@@ -93,8 +113,25 @@ const URL = ({url,defaultURLId}) => {
                                 <span>Created at: {getDate(url.SK)}</span>
                             </div>
                             <div className="float-right col-1">
-                                <span className="mx-1" role="button" onClick={(e)=>{URLUpdateUtil(url.visible)}}>{url.visible?<span className="fa fa-eye"></span>:<span className="fa fa-eye-slash"></span>}</span>
-                                <span className="fa fa-trash mx-1" role="button" onClick={(e)=>{toggleURLDeleteModal()}}></span>
+                                <span className="mx-1" role="button" onClick={(e)=>{URLUpdateUtil(url.visible)}} >{url.visible?
+                                    <>
+                                        <span className="fa fa-eye" id={"disableURL"+idTemp}></span>
+                                        <UncontrolledTooltip placement="left" target={"disableURL"+idTemp}>
+                                            Disable URL
+                                        </UncontrolledTooltip>
+                                    </>
+                                :
+                                    <>
+                                        <span className="fa fa-eye-slash" id={"enableURL"+idTemp}></span>
+                                        <UncontrolledTooltip placement="left" target={"enableURL"+idTemp}>
+                                            Enable URL
+                                        </UncontrolledTooltip>
+                                    </>
+                                }</span>
+                                <span className="fa fa-trash mx-1" role="button" onClick={(e)=>{toggleURLDeleteModal()}} id={"deleteURL"+idTemp}></span>
+                                <UncontrolledTooltip placement="left" target={"deleteURL"+idTemp}>
+                                    Delete URL
+                                </UncontrolledTooltip>
                             </div>
                         </div>
                     </div>
@@ -123,7 +160,7 @@ const URL = ({url,defaultURLId}) => {
         </Modal>
         </>      
         
-     );
+    )
 }
 
 export default React.memo(URL);
