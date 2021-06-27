@@ -1,0 +1,9 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "com.github.code.gambit",
+    "sha256_cert_fingerprints":
+    ["41:97:89:B1:3C:94:AA:AB:F3:E4:91:C0:60:F8:E2:A2:9C:30:55:4D:AE:88:27:55:51:7C:A8:9F:63:EF:C3:72"]
+  }
+}]
