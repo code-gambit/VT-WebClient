@@ -1,7 +1,7 @@
-import date from "date-and-time";
-const getDate = (id) =>{
-    var now=date.parse(id,'YYYY-MM-DD-hh-mm-ss');
-    now=date.format(now, 'ddd, MMM DD, YYYY H:mm');
-    return now;
+const moment = require('moment');
+const getDate = (dateString) =>{    
+    var gmtDateTime = moment.utc(dateString, "YYYY-MM-DD-hh-mm")
+    var local = gmtDateTime.local().format('YYYY-MMM-DD h:mm A');    
+    return local;
 }
 export default getDate;
