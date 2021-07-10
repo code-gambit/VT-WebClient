@@ -6,6 +6,7 @@ import axios from 'axios';
 import { useHistory} from 'react-router-dom';
 import date from "date-and-time";
 import { toast } from 'react-toastify';
+import getDate from '../../utils/getDate';
 const crypto = require('crypto');
 
 const URL = ({url,defaultURLId}) => {    
@@ -62,12 +63,6 @@ const URL = ({url,defaultURLId}) => {
             history.push('/files')                      
         }) 
     }
-    const getDate = (url_SK) =>{
-        var urlId=url_SK.slice(4);
-        var now=date.parse(urlId,'YYYY-MM-DD-hh-mm-ss');
-        now=date.format(now, 'ddd, MMM DD, YYYY H:mm');
-        return now;
-    }
     const code = (string) =>{        
         return crypto.createHash('sha1').update(string).digest('hex');
     }
@@ -110,7 +105,7 @@ const URL = ({url,defaultURLId}) => {
                             <div className="float-left">
                                 <span>Clicks Left: {url.clicks_left}</span>
                                 <br/>
-                                <span>Created at: {getDate(url.SK)}</span>
+                                <span>Created at: {getDate(url.SK.slice(4))}</span>
                             </div>
                             <div className="float-right col-1">
                                 <span className="mx-1" role="button" onClick={(e)=>{URLUpdateUtil(url.visible)}} >{url.visible?
