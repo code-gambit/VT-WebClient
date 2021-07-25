@@ -3,12 +3,13 @@ import * as FileActionCreators from '../../Context/ActionCreators/FileActionCrea
 import * as AuthActionCreators from '../../Context/ActionCreators/AuthActionCreater';
 import { FileContext } from '../../Context/Contexts/FileContext';
 import { AuthContext } from '../../Context/Contexts/AuthContext';
+import { FileUploadContext } from '../../Context/Contexts/FileUploadContext';
+import * as FileUploadActionCreators from '../../Context/ActionCreators/FileUploadActionCreater';
 import axios from '../../utils/axios';
 import { toast } from 'react-toastify';
 import {useDropzone} from 'react-dropzone';
-import getFileSize from '../../utils/fileSize';
 import getFileType from '../../utils/fileType';
-
+import { v4 as uuidv4 } from 'uuid';
 if((typeof TextDecoder==='undefined' || typeof TextEncoder==='undefined') && typeof require!=='undefined'){
     global.TextDecoder = require('util').TextDecoder
     global.TextEncoder = require('util').TextEncoder
@@ -33,48 +34,15 @@ const img = {
     height: '50px',
     width: '50px'
 };
-const FileForm = ({setCurrentPage}) => {
-    const {fileState, fileDispatch} = useContext(FileContext)
+const FileForm = ({setCurrentPage, toggleFileFormModal, toggleFileUploadStatusModal}) => {
+    const {fileState, fileDispatch} = useContext(FileContext);
+    const {fileUploadDispatch} = useContext(FileUploadContext);
     const {authState} = useContext(AuthContext);
     const [files,setFiles] = useState([]);    
-    const [isDragActive, setIsDragActive] = useState(true);
     useEffect(()=>{
         series(files[0],0);
     },[files])
-    const setStatus = (index, status, URL=undefined) =>{
-        const temp = files;
-        temp[index].file_status = status;
-        if(URL){
-            temp[index].default = process.env.REACT_APP_FRONTENDURL+"/"+URL;
-        }
-        setFiles(temp);
-    }
-    const renderStatus = (status, URL) =>{
-        if(status=="uploaded"){
-            return(
-                <>
-                <span className="fa fa-clipboard mx-2" role="button" onClick={() => {navigator.clipboard.writeText(URL)}}></span>                          
-                <span className="text-success">
-                    <i className="fa fa-check-circle fa-lg"></i>
-                </span>
-                </>
-            )
-        }
-        else if(status=="uploading"){
-            return(
-                <div class="spinner-grow" role="status">
-                    <span class="sr-only">Loading...</span>
-                </div>
-            )
-        }
-        else if(status=="error"){
-            return(
-                <span className="text-danger">
-                    <i class="fa fa-exclamation-circle fa-lg"></i>
-                </span>
-            )
-        }
-    }
+
     async function getBuffer(file){
         const reader=new window.FileReader();
         return new Promise((resolve,reject)=>{
@@ -87,7 +55,8 @@ const FileForm = ({setCurrentPage}) => {
     }
     const series = (file,index) =>{
         if(file){
-            setIsDragActive(false);
+            toggleFileFormModal();
+            toggleFileUploadStatusModal();
             handleSubmit(file,index,()=>{
                 series(files[index+1],index+1);
             });
@@ -114,12 +83,9 @@ const FileForm = ({setCurrentPage}) => {
             fileDispatch(FileActionCreators.updateStartDate(undefined));
             FileActionCreators.loadFiles(fileDispatch,1,undefined,fileState.searchParam);      
             setCurrentPage(1);
-            setIsDragActive(true);
         }
     }
     const handleSubmit = async (file,i,callback)=>{        
-        const index=i
-        
         try{
             if(file==undefined){
                 throw new Error("Invalid File")
@@ -140,7 +106,9 @@ const FileForm = ({setCurrentPage}) => {
             if(response.data.error){
                 throw new Error(response.data.error);
             }
-            setStatus(index, "uploaded", response.data.body.default);
+            file.file_status = "uploaded";
+            file.default = response.data.body.default;
+            fileUploadDispatch(FileUploadActionCreators.fileUploadStateUpdateFile(file))
             authState.auth.storage_used+=fileData.size
             authState.auth.storage_used=parseFloat(authState.auth.storage_used.toFixed(4))
             AuthActionCreators.authStateUpdate(authState);
@@ -148,7 +116,8 @@ const FileForm = ({setCurrentPage}) => {
             callback();
         } catch(err){
             toast.error(err.message);
-            setStatus(index, "error");
+            file.status = "error";
+            fileUploadDispatch(FileUploadActionCreators.fileUploadStateUpdateFile(file))
             callback();
         }
     }
@@ -156,53 +125,28 @@ const FileForm = ({setCurrentPage}) => {
 
     const {getRootProps,getInputProps} = useDropzone({
         onDrop: acceptedFiles => {
-            setFiles(acceptedFiles.map(file => Object.assign(file, {
+            const fileData = acceptedFiles.map(file => Object.assign(file, {
                 preview: URL.createObjectURL(file),
                 file_type: getFileType(file.name),
                 file_name: file.name,
                 file_size: file.size,
-                file_status: "uploading"
-            })));
+                file_status: "uploading",
+                file_id: uuidv4()
+            }))
+            fileUploadDispatch(FileUploadActionCreators.fileUploadStateAddFiles(fileData));
+            setFiles(fileData);
+            
         }
-    });
-    const thumbFile = (file) =>{
-        return(
-            <div className="d-flex justify-content-between align-items-center">
-                <div className="p-1 d-flex flex-row align-items-center">
-                    <img src={file.preview} style={img} alt="file"/>            
-                    <span>
-                        <span className="px-2 font-weight-bold text-monospace">{file.file_name}</span>    
-                        <span className="badge badge-info">{getFileSize(file.file_size)}</span>                
-                    </span>
-                </div>
-                <span>
-                    {renderStatus(file.file_status, file.default)}
-                </span>
-            </div>
-        )
-    }
-    const thumbs = files.map(file => {
-        return(
-            thumbFile(file)
-        )
     });
     return ( 
         <div className="text-center">   
-            {isDragActive?         
-                <div {...getRootProps({style:baseStyle})}>
-                    <input {...getInputProps()} />                
-                    <div className="">
-                        <img src="https://res.cloudinary.com/code-gambit/image/upload/v1621421198/Web%20App/file_40x40_sea3kj.png"/>
-                        <br></br>
-                        <p>Drag and Drop your files here</p>
-                    </div>
+            <div {...getRootProps({style:baseStyle})}>
+                <input {...getInputProps()} />                
+                <div className="">
+                    <img src="https://res.cloudinary.com/code-gambit/image/upload/v1621421198/Web%20App/file_40x40_sea3kj.png"/>
+                    <br></br>
+                    <p>Drag and Drop your files here</p>
                 </div>
-            :
-                ""
-            }  
-            <div>
-                
-                {thumbs}
             </div>
         </div>
         

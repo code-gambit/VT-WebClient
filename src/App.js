@@ -7,6 +7,7 @@ import Footer from './Components/Footer';
 import './App.css';
 import AuthContextProvider from './Context/Contexts/AuthContext';
 import FileContextProvider from './Context/Contexts/FileContext';
+import FileUploadContextProvider from './Context/Contexts/FileUploadContext';
 
 require('dotenv').config()
 
@@ -15,10 +16,12 @@ function App() {
     <div className="App">
       <AuthContextProvider>
         <BrowserRouter>
-          <FileContextProvider>
+          <FileContextProvider>            
             <Header/>
             <div className="routing-wrapper">
-              <Routing/>
+              <FileUploadContextProvider>
+                <Routing/>
+              </FileUploadContextProvider>
             </div>
             <Footer/>
           </FileContextProvider>

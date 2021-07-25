@@ -3,8 +3,6 @@ import * as ActionTypes from '../ActionTypes';
 export const fileUploadReducer = (state,action) =>{
     switch(action.type){
         case ActionTypes.FILE_UPLOAD_STATE_ADD_FILES:
-            return {...state,files:action.payload};
-        case ActionTypes.FILE_UPLOAD_STATE_UPDATE_FILES:
             var temp = state.files;
             for(var i=0;i<action.payload.length;i++){
                 temp.push(action.payload[i]);
