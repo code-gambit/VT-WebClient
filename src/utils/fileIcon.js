@@ -13,7 +13,7 @@ const getFileIconURL = (file_extension) =>{
     else if(file_extension == "zip") return "https://res.cloudinary.com/code-gambit/image/upload/v1623177970/Web%20App/File%20Icons/zip_bjnt9y.png";
     else if(file_extension == "json") return "https://res.cloudinary.com/code-gambit/image/upload/v1623177969/Web%20App/File%20Icons/json-file_dwuutw.png";
     else if(file_extension == "css") return "https://res.cloudinary.com/code-gambit/image/upload/v1623177969/Web%20App/File%20Icons/css_wss2ax.png";
-    else if(file_extension == "jpg") return "https://res.cloudinary.com/code-gambit/image/upload/v1623177969/Web%20App/File%20Icons/jpg_tgoot0.png";
+    else if(file_extension == "jpg" || file_extension == "jpeg") return "https://res.cloudinary.com/code-gambit/image/upload/v1623177969/Web%20App/File%20Icons/jpg_tgoot0.png";
     else if(file_extension == "png") return "https://res.cloudinary.com/code-gambit/image/upload/v1623177969/Web%20App/File%20Icons/png_r4vqaq.png";
     else if(file_extension == "xml") return "https://res.cloudinary.com/code-gambit/image/upload/v1623177969/Web%20App/File%20Icons/xml_ezupea.png";
     else if(file_extension == "pptx" || file_extension == "ppt") return "https://res.cloudinary.com/code-gambit/image/upload/v1623177968/Web%20App/File%20Icons/ppt_hfuaqi.png";

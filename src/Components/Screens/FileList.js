@@ -2,16 +2,19 @@ import React, { useContext, useEffect, useState} from 'react';
 import { Row, Modal, ModalHeader, ModalBody, 
     Pagination, PaginationItem, PaginationLink } from 'reactstrap';
 import { FileContext } from '../../Context/Contexts/FileContext';
+import { FileUploadContext } from '../../Context/Contexts/FileUploadContext';
 import * as FileActionCreators from '../../Context/ActionCreators/FileActionCreator';
 import FileForm from '../FileComponents/FileForm';
 import RenderFile from '../FileComponents/FileCard';
 import { Loading } from '../Loading';
 import FileDateFilter from '../FileComponents/FileDateFilter';
-
+import FileUploadStatus from '../FileComponents/FileUploadStatus';
 const FileList = () => {
     const {fileState,fileDispatch} = useContext(FileContext);
+    const {fileUploadState} = useContext(FileUploadContext);
     const [isFileFormOpen,setIsFileFormOpen] = useState(false);
     const [isFileDateFilterOpen, setIsFileDateFilterOpen] = useState(false);
+    const [isFileUploadStatusModalOpen, setIsFileUploadStatusModalOpen] = useState(false);
     const [currentPage, setCurrentPage] = useState(fileState.currentPage);
     const [lastEKMap, setLastEKMap] = useState(fileState.lastEKMap);
     const [searchParam,setSearchParam] = useState(undefined);
@@ -45,10 +48,13 @@ const FileList = () => {
     }
 
     const toggleFileFormModal = ()=>{
-        setIsFileFormOpen(!isFileFormOpen)        
+        setIsFileFormOpen(!isFileFormOpen);
     }
     const toggleFileDateFilterModal = () =>{
         setIsFileDateFilterOpen(!isFileDateFilterOpen);
+    }
+    const toggleFileUploadStatusModal = () => {
+        setIsFileUploadStatusModalOpen(!isFileUploadStatusModalOpen);
     }
     function goToNextPage(){
         setCurrentPage(fileState.currentPage+1);                  
@@ -166,27 +172,46 @@ const FileList = () => {
         <div className="container">
             <h3 className="text-center pt-2">YOUR FILES</h3>
             <div className="d-flex justify-content-between align-items-center p-2">                
-                <div type="button" onClick={toggleFileFormModal}>
-                    <i class="fa fa-plus fa-lg"></i>
-                </div>  
+                <div className="d-flex justify-content-between col-3">
+                    <div type="button" onClick={toggleFileFormModal}>
+                        <i class="fa fa-plus fa-lg"></i>
+                    </div> 
+                    {fileUploadState.files.length>0?
+                        <div type="button" onClick={toggleFileUploadStatusModal}>
+                            <i class="fa fa-upload"></i>
+                        </div>
+                    :
+                        ""
+                    } 
+                </div>
                 <div>
-                    {renderFilters()}    
+                    {renderFilters()}
                 </div>                                                                                         
             </div>
             <Modal isOpen={isFileFormOpen} toggle={toggleFileFormModal} className="modal-dialog-centered">
                 {/* <ModalHeader toggle={toggleFileFormModal}>Upload your files</ModalHeader>                 */}
                 <ModalBody className="text-center modal-wrapper">
-                    <FileForm setCurrentPage={setCurrentPage}/>
+                    <FileForm 
+                        setCurrentPage = {setCurrentPage} 
+                        toggleFileFormModal = {toggleFileFormModal}
+                        toggleFileUploadStatusModal = {toggleFileUploadStatusModal}
+                    />
                 </ModalBody>
             </Modal>
             <Modal isOpen={isFileDateFilterOpen} toggle={toggleFileDateFilterModal}>
-                <ModalHeader>Filter By Date</ModalHeader>
+                <ModalHeader toggle={toggleFileDateFilterModal}>Filter By Date</ModalHeader>
                 <ModalBody>
                     <div className="text-center">
                         <FileDateFilter toggle={toggleFileDateFilterModal}/>
                     </div>
                 </ModalBody>
             </Modal> 
+            <Modal isOpen={isFileUploadStatusModalOpen} toggle={toggleFileUploadStatusModal} className="modal-dialog-centered">
+                <ModalHeader toggle={toggleFileUploadStatusModal}>File Uploads</ModalHeader>
+                <ModalBody className="text-center modal-wrapper">
+                    <FileUploadStatus/>
+                </ModalBody>
+            </Modal>
             <div>
                 {renderData()}
             </div>
