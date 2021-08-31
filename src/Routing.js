@@ -5,6 +5,7 @@ import { AuthContext } from "./Context/Contexts/AuthContext";
 import Download from "./Components/Screens/Download";
 import Authenticate from "./Components/Screens/Authentication";
 import { Loading } from "./Components/Loading";
+import Maintenance from "./Components/Screens/Maintenance";
 
 const HomePage = lazy(() => import("./Components/Screens/Homepage"));
 const Dashboard = lazy(() => import("./Components/Screens/Dashboard"));
@@ -30,6 +31,7 @@ const Routing = () => {
       history.push("/dashboard");
     }
   }
+  history.push("/maintenance");
   return (
     <ErrorBoundary>
       <Suspense fallback={<Loading />}>
@@ -41,6 +43,7 @@ const Routing = () => {
             <Route exact path="/profile" component={Profile} />
             <Route exact path="/about" component={About} />
             <Route exact path="/:urlId" component={Download} />
+            <Route exact path="/maintenance" component={Maintenance} />
             <Route>
               <Redirect to="/dashboard" /> <HomePage />
             </Route>
@@ -49,7 +52,8 @@ const Routing = () => {
           <Switch>
             <Route exact path="/about" component={About} />
             <Route exact path="/authenticate" component={Authenticate} />
-            <Route exact path="/:urlId" component={Download} />
+            <Route exact path="/maintenance" component={Maintenance} />
+            <Route exact path="/:urlId" component={Download} />            
             <Route exact path="/" component={HomePage} />
           </Switch>
         )}
