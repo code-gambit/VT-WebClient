@@ -31,7 +31,10 @@ const Routing = () => {
       history.push("/dashboard");
     }
   }
-  history.push("/maintenance");
+  /**
+   * Use this command for rendering maintenance page
+   */
+  // history.push("/maintenance");
   return (
     <ErrorBoundary>
       <Suspense fallback={<Loading />}>
@@ -42,8 +45,8 @@ const Routing = () => {
             <Route exact path="/file/:fileId" component={FileDetail} />
             <Route exact path="/profile" component={Profile} />
             <Route exact path="/about" component={About} />
-            <Route exact path="/:urlId" component={Download} />
             <Route exact path="/maintenance" component={Maintenance} />
+            <Route exact path="/:urlId" component={Download} />
             <Route>
               <Redirect to="/dashboard" /> <HomePage />
             </Route>
