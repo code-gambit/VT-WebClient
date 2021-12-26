@@ -149,7 +149,13 @@ export const SignIn = (props) => {
               Forgot password?
             </a>
           </FormGroup>
-
+          <span className="text-info">
+            Demo Account Credentials
+            <br/>
+            Email: coderman7766@gmail.com
+            <br/>
+            Password: 123456789
+          </span>
           <Button
             color="primary"
             style={{ "margin-bottom": "10px" }}
